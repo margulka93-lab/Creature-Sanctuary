@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "momo",
+  "displayName": "Momo",
+  "speciesId": "puffel",
+  "category": "creature",
+  "productionStatus": "scene_ready",
+  "styleProfile": "cozy-modern-magical-v0.2",
+  "files": {
+    "idle": "momo_idle.png",
+    "blink": "momo_blink.png"
+  },
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "pivot": {
+    "x": 0.5,
+    "y": 0.9
+  },
+  "sizeClass": "small",
+  "recommendedDisplayHeightPx": 96,
+  "anchorTypes": [
+    "tree",
+    "stream",
+    "tall_grass"
+  ],
+  "animations": {
+    "idle_breathe": {
+      "type": "procedural_transform",
+      "source": "idle",
+      "loop": true,
+      "durationMs": 2800,
+      "scaleX": [
+        1.0,
+        0.994,
+        1.0
+      ],
+      "scaleY": [
+        1.0,
+        1.012,
+        1.0
+      ],
+      "offsetYpxAtDisplayScale": [
+        0,
+        -1,
+        0
+      ]
+    },
+    "blink": {
+      "type": "state_swap",
+      "open": "idle",
+      "closed": "blink",
+      "closedDurationMs": 110,
+      "intervalMs": {
+        "min": 4500,
+        "max": 9500
+      }
+    }
+  },
+  "notes": [
+    "Idle and blink were normalized to the same source canvas and crop to minimize visible jumping during state swap.",
+    "recommendedDisplayHeightPx and pivot are technical starting values for M1 playtest, not permanent art canon.",
+    "Do not infer gameplay behavior from this manifest."
+  ]
+}

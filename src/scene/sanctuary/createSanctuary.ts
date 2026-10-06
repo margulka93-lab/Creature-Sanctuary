@@ -1,4 +1,5 @@
-import { Application, Container, Graphics, Text } from 'pixi.js';
+import { Application, Assets, Container, Graphics, Sprite, Text, type Texture } from 'pixi.js';
+import momoManifest from '../../../public/assets/creatures/momo/momo_manifest.json';
 import radura from '../../content/radura.json';
 import { activityById, nibiActivityById, type GameState } from '../../core/state/GameState';
 import type { ActivityDefinition, BehaviorState } from '../../core/state/behavior';
@@ -11,6 +12,17 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
   } catch (error) {
     app.destroy(true, { children: true });
     throw error;
+  }
+  let momoTextures: { idle: Texture; blink: Texture } | null = null;
+  try {
+    const assetBase = `${import.meta.env.BASE_URL}assets/creatures/momo/`;
+    const [idle, blink] = await Promise.all([
+      Assets.load<Texture>(assetBase + momoManifest.files.idle),
+      Assets.load<Texture>(assetBase + momoManifest.files.blink),
+    ]);
+    momoTextures = { idle, blink };
+  } catch {
+    // PNG failure must not prevent gameplay or the existing placeholder scene.
   }
   app.canvas.setAttribute('aria-label', 'La Radura: Momo fra Albero, Ruscello ed Erba Alta, con una ciotola');
   app.canvas.setAttribute('role', 'img');
@@ -41,12 +53,22 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
     app.stage.addChild(marker, label);
   }
   const momo = new Container();
-  momo.addChild(new Graphics().circle(0, 0, 30).fill('#f3e4be'));
+  const placeholder = new Container();
+  placeholder.addChild(new Graphics().circle(0, 0, 30).fill('#f3e4be'));
   const eyes = new Graphics();
-  momo.addChild(eyes);
+  placeholder.addChild(eyes);
+  momo.addChild(placeholder);
+  const sprite = momoTextures ? new Sprite(momoTextures.idle) : null;
+  const displayScale = momoManifest.recommendedDisplayHeightPx / momoManifest.canvas.height;
+  if (sprite) {
+    sprite.anchor.set(momoManifest.pivot.x, momoManifest.pivot.y);
+    sprite.scale.set(displayScale);
+    placeholder.visible = false;
+    momo.addChild(sprite);
+  }
   const name = new Text({ text: 'Momo', style: { fontSize: 18, fill: '#263b27' } });
   name.anchor.set(0.5);
-  name.position.set(0, -48);
+  name.position.set(0, sprite ? -momoManifest.recommendedDisplayHeightPx * momoManifest.pivot.y - 18 : -48);
   momo.addChild(name);
   const symbol = new Text({ text: '', style: { fontSize: 19, fill: '#263b27' } });
   symbol.position.set(31, -31);
@@ -77,6 +99,23 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
     const progress = Math.max(0, Math.min(1, (clock.now() - current.phaseStartedAt) / (current.deadline - current.phaseStartedAt)));
     sprite.position.set(from.x + (to.x - from.x) * progress + offset, from.y + (to.y - from.y) * progress);
   }
+  let visualElapsedMs = 0;
+  // Fixed cosmetic cadence uses no gameplay RNG and is never persisted.
+  const blink = momoManifest.animations.blink;
+  const blinkIntervalMs = (blink.intervalMs.min + blink.intervalMs.max) / 2;
+  const drawAppearance = () => {
+    if (!displayedState || !sprite || !momoTextures) return;
+    const sleeping = displayedState.momo.phase === 'settled' && displayedState.momo.currentActivityId === 'doze_tree';
+    const blinking = visualElapsedMs % blinkIntervalMs >= blinkIntervalMs - blink.closedDurationMs;
+    sprite.texture = sleeping || blinking ? momoTextures.blink : momoTextures.idle;
+    const breathe = momoManifest.animations.idle_breathe;
+    const amount = (1 - Math.cos(2 * Math.PI * visualElapsedMs / breathe.durationMs)) / 2;
+    sprite.scale.set(
+      displayScale * (1 + (breathe.scaleX[1] - 1) * amount),
+      displayScale * (1 + (breathe.scaleY[1] - 1) * amount),
+    );
+    // Scale around the manifest pivot; leave position fixed at the scene anchor.
+  };
   const drawPosition = () => {
     if (!displayedState) return;
     const resident = displayedState.nibiPhase === 'resident' && displayedState.nibi;
@@ -84,7 +123,11 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
     position(momo, displayedState.momo, activityById, resident ? -35 : 0);
     if (resident) position(nibi, resident, nibiActivityById, 35);
   };
-  app.ticker.add(drawPosition);
+  app.ticker.add((ticker) => {
+    visualElapsedMs += ticker.deltaMS;
+    drawPosition();
+    drawAppearance();
+  });
 
   return {
     render(state: GameState) {
@@ -99,6 +142,7 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
       else eyes.circle(-10, -5, 4).circle(10, -5, 4).fill('#39352e');
       symbol.text = state.momo.phase === 'settled' ? activityById(state.momo.currentActivityId).symbol : '';
       drawPosition();
+      drawAppearance();
     },
     destroy() { app.destroy(true, { children: true }); },
   };
