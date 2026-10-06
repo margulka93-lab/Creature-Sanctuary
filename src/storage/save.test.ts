@@ -12,11 +12,11 @@ const random = { next: () => 0 };
 const noRandom = { next: (): number => { throw new Error('Unexpected RNG consumption'); } };
 const initial = createInitialState(clock, random);
 const moving = advanceTime(initial, { now: () => initial.momo.deadline }, random);
-const envelope = (state: unknown, schemaVersion = 3) => JSON.stringify({ schemaVersion, savedAt: 1000, state });
+const envelope = (state: unknown, schemaVersion = 4) => JSON.stringify({ schemaVersion, savedAt: 1000, state });
 
 describe('M2 versioned save with M1 resume regression', () => {
-  it('serializes schema 3, timestamp and state', () => {
-    expect(JSON.parse(serializeSave(initial, clock))).toEqual({ schemaVersion: 3, savedAt: 1000, state: initial });
+  it('serializes schema 4, timestamp and state', () => {
+    expect(JSON.parse(serializeSave(initial, clock))).toEqual({ schemaVersion: 4, savedAt: 1000, state: initial });
   });
 
   it('round-trips an in-progress settled phase without drawing new randomness', () => {
@@ -98,8 +98,9 @@ describe('M2 versioned save with M1 resume regression', () => {
   it('migrates a valid schema 2 save preserving Momo and initializes only M2 fields', () => {
     const legacy = JSON.stringify({ schemaVersion: 2, savedAt: 9500, state: { momo: moving.momo } });
     const migrated = readSave(memoryAdapter(legacy), { now: () => 10000 }, noRandom);
-    expect(migrated).toEqual({ schemaVersion: 3, savedAt: 9500, state: {
+    expect(migrated).toEqual({ schemaVersion: 4, savedAt: 9500, state: {
       momo: moving.momo, resources: { berries: 1 }, bowl: 'empty', latestReport: null,
+      nibiPhase: 'unseen', nibi: null, relations: { momoNibi: 0 },
     } });
   });
 

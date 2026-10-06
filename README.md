@@ -1,8 +1,9 @@
 # Creature Sanctuary
 
-Prototipo M2: Momo mantiene le tre attività autonome M1; il primo return loop
-aggiunge Bacche, una ciotola fissa e l'ultimo report del Diario. La grafica usa
-solo forme e testo placeholder.
+Prototipo M3: Momo conserva le attività autonome M1; Nibi arriva attraverso
+tracce e ciotola, poi vive nella Radura con un profilo più mobile. Il Diario
+racconta i ritorni e gli eventi condivisi cambiano un solo legame qualitativo.
+La grafica usa forme e testo placeholder.
 
 ## Avvio
 
@@ -19,98 +20,148 @@ npm run preview
 `dev` serve l'app su http://localhost:5173; `preview` serve `dist/` su
 http://localhost:4173. `build` controlla anche i tipi TypeScript. Il lockfile fissa
 le dipendenze; per installazioni riproducibili successive usare `npm ci`.
-I test girano in Node. I test core/storage non inizializzano React, Pixi o DOM;
-un test di integrazione separato verifica che render React ripetuti non
-rieseguano il bootstrap offline.
+I test core/storage girano in Node senza inizializzare React, Pixi o DOM;
+un test di integrazione separato verifica che render React ripetuti con
+StrictMode non rieseguano il bootstrap offline. Nessuna nuova dipendenza M3.
 
-## Verifica manuale M2
+## Verifica manuale M3
 
-### Nuova partita
+Usare sempre lo stesso browser e indirizzo/origine. Chiudere davvero la scheda
+nei passaggi offline; una scheda aperta continua ad aggiornare il checkpoint.
+
+### A — Tracce
 
 1. Nei DevTools → Application → Local Storage eliminare solo la chiave
-   `creature-sanctuary.save`, poi aprire/ricaricare l'app.
-2. Verificare **1 Bacca**, ciotola vuota e nessun report. Momo parte sonnecchiando
-   sotto l'Albero e continua a scegliere autonomamente fra le tre attività.
-3. Premere **Lascia 1 Bacca**: il conteggio scende a 0, la Bacca appare nella
-   ciotola e l'azione viene disabilitata. Non ci sono comandi di movimento.
-4. Un reload immediato conserva la ciotola piena: sotto cinque minuti nessuna
-   raccolta, consumo o nuovo evento/report offline.
+   `creature-sanctuary.save` per una nuova partita, oppure usare un save M2
+   schema 3 valido. Verificare ciotola vuota: la nuova partita ha 1 Bacca.
+2. Chiudere la scheda per **almeno cinque minuti**, poi riaprire l'app.
+3. Il Diario deve aprirsi con **Nuove tracce**, prima dell'evento ordinario.
+   Nibi e il legame non devono essere ancora visibili nella Radura.
+4. Chiudere il Diario e ricaricare subito: niente nuova discovery o consumo;
+   il Diario resta chiuso e può essere riaperto con il pulsante **Diario**.
 
-### Primo ritorno reale
+### B — Arrivo
 
-1. Chiudere la scheda per **almeno cinque minuti**, quindi riaprire l'app sullo
-   stesso indirizzo/origine e nello stesso browser.
-2. Verificare ciotola vuota e report **Mentre eri via** aperto automaticamente.
-   Se l'assenza è inferiore a trenta minuti compare un solo evento; con la
-   ciotola piena deve essere uno degli eventi ciotola.
-3. Chiudere il report: al reload immediato non deve riaprirsi, né duplicare Bacche
-   o eventi. Usare **Diario** per riaprire lo stesso ultimo report.
-4. Per un ritorno più lungo, verificare che il report rimanga compatto, con al
-   massimo due righe di eventi. I test coprono le soglie esatte di raccolta.
-5. Provare un save corrotto (`{broken`) o di versione sconosciuta: l'app deve
-   ripartire in sicurezza. Uno schema 2 valido deve conservare Momo e aggiungere
-   i campi M2; uno schema 1 riparte dal nuovo stato iniziale.
+1. Con le tracce già scoperte e almeno 1 Bacca, premere **Lascia 1 Bacca**.
+   Costa 1 Bacca; il pulsante viene disabilitato e la Bacca appare nella ciotola.
+2. Chiudere la scheda per **almeno cinque minuti**, poi riaprire.
+3. Il Diario deve annunciare **Un nuovo abitante**. La ciotola è vuota; non
+   compaiono eventi ciotola né altri eventi ricorrenti in questo ritorno.
+   L'eventuale raccolta comune resta disponibile.
+4. Nibi è visibile, con corpo nocciola, orecchie/germoglio e nome. Compare
+   **Legame Momo–Nibi: Si stanno studiando**, senza numero o barra.
+5. Chiudere il Diario e ricaricare subito: Nibi resta, nessun secondo arrivo,
+   nessun ulteriore consumo e lo stesso report resta riapribile.
 
-### Playtest umano dopo il merge
+### C — Due creature autonome
 
-M2 è una implementazione da valutare, **non è automaticamente design-validata**.
-Dopo almeno un ritorno reale chiedersi: è successo qualcosa o sembra solo un
-popup di ricompensa? La ciotola comunica causa/conseguenza? La riga su Momo gli
-aggiunge personalità? Le Bacche sono utili o già troppo astratte? Il report è
-invadente? Viene voglia di chiudere e tornare ancora? La ripetizione/macchina
-sottostante è troppo evidente?
+Osservare **2–3 minuti** senza impartire comandi:
 
-**M3 non è iniziata e resta subordinata a questa verifica umana.**
+- Momo conserva soste più lunghe e movimento di 3 secondi;
+- Nibi alterna Erba Alta, Ruscello e Albero con soste più corte e movimento di 2 secondi;
+- le deadline sono indipendenti: uno può sostare mentre l'altro si sposta;
+- allo stesso anchor i due placeholder occupano corsie visive separate;
+- non compaiono comandi di movimento o altri controlli sulle creature.
 
-## Regole M2 e persistenza
+### D — Primo ritorno condiviso
 
-- Nuova partita: 1 Bacca, ciotola vuota, ultimo report null.
-- Lasciare una Bacca costa 1 e richiede ciotola vuota e inventario positivo.
-- Da 5 minuti di assenza: report con 1 evento; da 30 minuti: 2 eventi al massimo.
-- Raccolta comune: `min(8, floor(elapsed / 15 minuti))`. Da 5 a 14m59s è zero.
-- Una ciotola piena richiede un evento ciotola nel primo slot e viene svuotata.
-- Gli eventi possono aggiungere +1 Bacca oltre alla raccolta comune. Il report
-  mostra il totale guadagnato, con testo risolto dai contenuti tramite event ID.
-- Si evitano eventi dell'ultimo report quando esistono alternative eleggibili e
-  non si ripete lo stesso evento due volte nello stesso ritorno.
-- Si conserva solo l'ultimo report e il suo acknowledgement, senza timeline.
+1. Con Nibi residente e ciotola vuota, chiudere per **almeno cinque minuti**.
+2. Riaprire: il singolo evento deve raccontare Momo e Nibi insieme.
+3. Chiudere il Diario e ricaricare: evento e delta legame non si applicano
+   due volte. Verificare la categoria qualitativa.
+4. A valore 0, l'evento sulle radici mantiene **Si stanno studiando**; un ritorno
+   successivo può scegliere l'alternativa positiva grazie al repetition control.
+5. Con ciotola piena e assenza breve il normale evento ciotola ha precedenza;
+   da trenta minuti possono comparire ciotola + un solo evento condiviso.
 
-Lo **schema 3** migra in modo mirato i save M1 (schema 2) validi: preserva Momo,
-aggiunge 1 Bacca, ciotola vuota e report null. La normale reconciliation può poi
-usare il timestamp originale per un ritorno valido. Non c'è un framework di
-migrazione. Save sconosciuti, corrotti o incoerenti usano un nuovo stato sicuro.
+### Regressioni M1/M2 e save
+
+- Un reload sotto cinque minuti non genera raccolta, discovery o nuovo report,
+  né consuma una Bacca lasciata nella ciotola.
+- Momo resta autonomo e mantiene i tre comportamenti originali.
+- Da 15 minuti completi verificare la raccolta; da 30 minuti al massimo due
+  eventi ricorrenti. I test deterministici coprono i confini esatti e il cap.
+- Save corrotti o versioni sconosciute ripartono in sicurezza. Schema 3 conserva
+  Momo, Bacche, ciotola, ultimo report e timestamp originale, inizializzando Nibi
+  non ancora scoperto. Schema 2 conserva il percorso di migrazione M1 esistente;
+  schema 1 riparte da uno stato iniziale sicuro.
+
+### Playtest umano richiesto
+
+Dopo l'arrivo e almeno un ritorno condiviso valutare:
+
+- le tracce creano aspettativa o sembrano una flag tecnica?
+- la ciotola comunica attrazione di Nibi oppure acquisto mascherato?
+- Nibi sembra diverso da Momo attraverso tempi, movimento e placeholder?
+- due creature rendono la Radura più viva o soltanto affollata?
+- l'evento condiviso racconta un rapporto?
+- la categoria qualitativa aiuta o sembra una barra sociale travestita?
+- viene voglia di vedere un'altra interazione?
+- il return loop appare già troppo meccanico/ripetitivo?
+
+**M3 non è automaticamente design-validata dai test. M4 non è iniziata e resta
+bloccata fino al playtest umano.**
+
+## Regole e persistenza
+
+M2 mantiene una sola risorsa attiva, **Bacche**, e una ciotola vuota/piena:
+
+- nuova partita: 1 Bacca, ciotola vuota, ultimo report null;
+- lasciare una Bacca costa 1 e richiede ciotola vuota e inventario positivo;
+- soglia report: 5 minuti; massimo 1 evento ricorrente sotto 30 minuti, 2 dopo;
+- raccolta comune: `min(8, floor(elapsed / 15 minuti))`;
+- bonus +1 Bacca restano soltanto negli eventi generali M2;
+- gli ID dell'ultimo report vengono evitati quando ci sono alternative valide;
+- solo ultimo report e acknowledgement persistiti, senza timeline.
+
+M3 aggiunge soltanto `nibiPhase`, comportamento Nibi nullable e
+`relations.momoNibi` (intero 0–5). Primo ritorno valido: `unseen → traces` senza
+renderizzare Nibi. Ritorno successivo valido con ciotola piena:
+`traces → resident`, Bacca consumata, `visit_tree` all'Albero e relazione 0.
+L'arrivo sopprime tutti gli eventi ricorrenti del ritorno; le tracce convivono
+con il normale M2. Le discovery sono separate dagli slot ricorrenti.
+
+Dopo l'arrivo: prima ciotola, poi al massimo un evento condiviso eleggibile per
+il valore del legame, poi eventi generali per gli slot restanti. I sei eventi
+condivisi applicano +1/-1 clampato 0–5 e non producono Bacche. Non c'è decadimento.
+Il numero resta nascosto: 0 **Si stanno studiando**, 1–2 **Si stanno abituando**,
+3–4 **Si cercano**, 5 **Amici**.
+
+Lo **schema 4** migra in modo mirato i save schema 3 validi, preservando tutti
+i campi M2 e `savedAt` e aggiungendo `unseen`, Nibi null e relazione 0.
+Non c'è un framework di migrazione. Save incoerenti ricadono su uno stato sicuro.
 
 `main.tsx` esegue `startGame` **prima** di montare React/StrictMode: lettura e
-migrazione, risoluzione di al massimo una fase Momo scaduta, reconciliation M2
-una sola volta, salvataggio immediato con baseline corrente, poi rendering.
-Nessun initializer o effect React assegna reward o sceglie eventi offline.
-Il reload immediato usa la nuova baseline, senza duplicare il ritorno.
-StrictMode rimane attivo.
+migrazione, al massimo una fase scaduta per ciascuna creatura residente,
+reconciliation una volta, salvataggio immediato con baseline corrente, rendering.
+Discovery, consumo e delta relazione passano per questo stesso percorso.
+Nessun initializer/effect React sceglie eventi offline o assegna reward.
+StrictMode rimane attivo. La riapertura del Diario è solo UI.
 
-Si salva a ogni transizione Momo, azione sulla ciotola e chiusura del Diario;
-`pagehide` aggiorna il checkpoint alla chiusura della scheda. Il controllo
-riapertura Diario è solo UI e non assegna premi. Se localStorage è bloccato o
-pieno, la sessione continua con un avviso: la baseline e i progressi non possono
-essere garantiti tra reload finché la persistenza non torna disponibile.
+Si salva a ogni transizione, azione sulla ciotola e chiusura del Diario;
+`pagehide` aggiorna il checkpoint alla chiusura della scheda. Se localStorage è
+bloccato/pieno, la sessione continua con un avviso: progressi e baseline non
+possono essere garantiti fra reload finché la persistenza non torna disponibile.
 
-Orologio arretrato: elapsed offline portato a zero, nessun premio/report;
-la fase Momo viene ribasata con timestamp non negativi. M1 risolve al massimo
-una fase e riparte dal presente, senza simulare le attività perse.
-La reconciliation M2 è limitata a due event slot, indipendentemente dall'assenza.
+Orologio arretrato: elapsed offline a zero, nessun premio/report; le fasi vengono
+ribasate senza timestamp negativi. Non si simulano catene di attività perse.
 
 ## Moduli e confini
 
-- `src/core/state/`: stato serializzabile, attività autonome M1 e regole ciotola/acknowledgement.
-- `src/core/time/`, `src/core/random/`: dipendenze Clock/RandomSource; implementazioni reali nel bootstrap.
-- `src/core/offline/`: report, selezione stretta M2 ed effetti; nessun EventEngine generico.
-- `src/content/radura.json`, `momo.json`: anchor e profilo M1 invariato.
-- `src/content/offline.json`: configurazione M2 e dieci eventi authored.
-- `src/app/startGame.ts`: orchestration una volta fuori React; `useGame` coordina la sessione attiva.
-- `src/ui/diary/`: pannello compatto, senza diagnostica o storico.
-- `src/scene/sanctuary/`: rendering Pixi, movimento interpolato e ciotola fissa.
-- `src/storage/`: SaveAdapter, localStorage, parsing/migrazione mirata, serializzazione versionata.
+- `src/core/state/`: stato, helper behavior per due profili, relazione e azioni.
+- `src/core/time/`, `src/core/random/`: Clock/RandomSource iniettati.
+- `src/core/offline/`: report, discovery e selezione stretta M2/M3; nessuna DSL.
+- `src/content/radura.json`, `momo.json`: anchor e profilo M1 invariati.
+- `src/content/nibi.json`: tre attività Nibi, identità e movimento 2 secondi.
+- `src/content/offline.json`: configurazione M2 e dieci eventi invariati.
+- `src/content/shared-events.json`, `discoveries.json`: sei eventi e due discovery authored.
+- `src/app/startGame.ts`: bootstrap pre-React; `useGame` coordina il timer attivo.
+- `src/ui/diary/`: report compatto con discovery prima delle righe ordinarie.
+- `src/scene/sanctuary/`: placeholder Pixi e interpolazione; nessuna regola.
+- `src/storage/`: adapter, validazione save, migrazioni mirate e schema 4.
 
-M1 conserva pesi 5/3/2, durate 8–14/5–9/4–7 secondi e movimenti di tre secondi.
-Pacing, layout 800×400 e grafica restano provvisori. Nibi, relazioni, Legnetti,
-Fibre, bisogni, upgrade, ulteriori strutture, storico Diario, EventEngine,
-Bestiario, meteo, backend, arte finale e audio restano fuori scope.
+Momo conserva pesi 5/3/2, durate 8–14/5–9/4–7 secondi e movimento di 3 secondi.
+Pacing, layout 800×400 e grafica restano provvisori. Terza creatura, bisogni,
+decadimento/direzionalità delle relazioni, Bestiario, nuove risorse/strutture,
+meteo/mistero, ContentRegistry/EventEngine generici, backend, arte finale e audio
+restano fuori scope. M4 non è implementata.

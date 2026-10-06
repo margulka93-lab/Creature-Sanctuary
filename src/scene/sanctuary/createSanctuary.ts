@@ -1,6 +1,7 @@
 import { Application, Container, Graphics, Text } from 'pixi.js';
 import radura from '../../content/radura.json';
-import { activityById, type GameState } from '../../core/state/GameState';
+import { activityById, nibiActivityById, type GameState } from '../../core/state/GameState';
+import type { ActivityDefinition, BehaviorState } from '../../core/state/behavior';
 import type { Clock } from '../../core/time/Clock';
 
 export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
@@ -52,15 +53,36 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
   momo.addChild(symbol);
   app.stage.addChild(momo);
 
+  const nibi = new Container();
+  nibi.addChild(new Graphics().ellipse(-12, -30, 7, 21).ellipse(12, -30, 7, 21).fill('#a77950')
+    .ellipse(0, 0, 24, 27).fill('#bd9266')
+    .circle(-8, -6, 3).circle(8, -6, 3).fill('#39352e')
+    .moveTo(0, -28).lineTo(0, -48).stroke({ color: '#46633b', width: 3 })
+    .ellipse(-7, -48, 8, 4).ellipse(7, -53, 8, 4).fill('#52764b'));
+  const nibiName = new Text({ text: 'Nibi', style: { fontSize: 18, fill: '#263b27' } });
+  nibiName.anchor.set(0.5);
+  nibiName.position.set(0, -75);
+  const nibiSymbol = new Text({ text: '', style: { fontSize: 19, fill: '#263b27' } });
+  nibiSymbol.position.set(25, -30);
+  nibi.addChild(nibiName, nibiSymbol);
+  nibi.visible = false;
+  app.stage.addChild(nibi);
+
   let displayedState: GameState | null = null;
+  function position<Id extends string>(sprite: Container, current: BehaviorState<Id>,
+    byId: (id: Id) => ActivityDefinition<Id>, offset: number) {
+    const from = radura.anchors.find((entry) => entry.id === current.currentAnchor)!;
+    if (current.phase === 'settled') { sprite.position.set(from.x + offset, from.y); return; }
+    const to = radura.anchors.find((entry) => entry.id === byId(current.targetActivityId).anchor)!;
+    const progress = Math.max(0, Math.min(1, (clock.now() - current.phaseStartedAt) / (current.deadline - current.phaseStartedAt)));
+    sprite.position.set(from.x + (to.x - from.x) * progress + offset, from.y + (to.y - from.y) * progress);
+  }
   const drawPosition = () => {
     if (!displayedState) return;
-    const current = displayedState.momo;
-    const from = radura.anchors.find((entry) => entry.id === current.currentAnchor)!;
-    if (current.phase === 'settled') { momo.position.set(from.x, from.y); return; }
-    const to = radura.anchors.find((entry) => entry.id === activityById(current.targetActivityId).anchor)!;
-    const progress = Math.max(0, Math.min(1, (clock.now() - current.phaseStartedAt) / (current.deadline - current.phaseStartedAt)));
-    momo.position.set(from.x + (to.x - from.x) * progress, from.y + (to.y - from.y) * progress);
+    const resident = displayedState.nibiPhase === 'resident' && displayedState.nibi;
+    // Fixed visual lanes avoid overlap at a shared anchor; persisted anchors stay unchanged.
+    position(momo, displayedState.momo, activityById, resident ? -35 : 0);
+    if (resident) position(nibi, resident, nibiActivityById, 35);
   };
   app.ticker.add(drawPosition);
 
@@ -68,6 +90,9 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
     render(state: GameState) {
       displayedState = state;
       berry.visible = state.bowl === 'berry';
+      nibi.visible = state.nibiPhase === 'resident' && state.nibi !== null;
+      nibiSymbol.text = state.nibi?.phase === 'settled' ? nibiActivityById(state.nibi.currentActivityId).symbol : '';
+      app.canvas.setAttribute('aria-label', `La Radura: Momo${nibi.visible ? ' e Nibi' : ''} fra Albero, Ruscello ed Erba Alta, con una ciotola`);
       const sleeping = state.momo.phase === 'settled' && state.momo.currentActivityId === 'doze_tree';
       eyes.clear();
       if (sleeping) eyes.moveTo(-14, -5).lineTo(-6, -5).moveTo(6, -5).lineTo(14, -5).stroke({ color: '#39352e', width: 3 });
