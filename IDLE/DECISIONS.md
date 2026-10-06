@@ -170,3 +170,52 @@ I tratti di Momo restano dati di identità, ma M1 non costruisce un sistema gene
 Il profilo authored di Momo esprime direttamente "timido" e "curioso".
 
 "Goloso" viene mantenuto ma non produce effetti finché non esiste un sistema cibo/bacche reale.
+
+
+## D-024 — M1 validata abbastanza da proseguire
+
+Dopo il playtest umano del prototipo placeholder, il comportamento autonomo di Momo è stato giudicato sufficiente per procedere.
+
+Questo non congela pacing, pesi o resa visiva di M1. Significa soltanto che la premessa "Momo può sembrare almeno un po' vivo con sistemi piccoli" non è stata smentita.
+
+## D-025 — M2 usa una sola risorsa attiva
+
+Per M2 entra in gioco soltanto **Bacche**.
+
+Legnetti e Fibre restano nel concept ma sono differiti finché esiste un uso reale per loro.
+
+Il prototipo parte con 1 Bacca.
+
+## D-026 — M2 usa offline reconciliation compresso
+
+M2 non simula le attività di Momo una per una durante l'assenza.
+
+Regole di prototipo:
+
+- report da 5 minuti di assenza;
+- massimo 1 evento sotto 30 minuti;
+- massimo 2 eventi da 30 minuti in su;
+- raccolta comune: 1 Bacca ogni 15 minuti completi;
+- massimo 8 Bacche da raccolta comune per ritorno.
+
+I numeri sono parametri di playtest e possono essere ribilanciati.
+
+## D-027 — La ciotola è la prima modifica attiva
+
+Il primo sink/azione del giocatore è lasciare 1 Bacca nella ciotola.
+
+Se resta almeno 5 minuti offline, la Bacca viene consumata e il report deve contenere un evento ciotola.
+
+Questa è la prima espressione meccanica del tratto `goloso` di Momo.
+
+## D-028 — Diario M2 conserva solo l'ultimo ritorno
+
+M2 non implementa una timeline storica completa.
+
+Conserva l'ultimo return report, lo apre automaticamente una volta e permette di riaprirlo tramite un controllo Diario.
+
+## D-029 — Gli eventi offline M2 restano un sistema stretto
+
+M2 usa eventi data-driven limitati alle necessità del return loop: peso, minimo tempo offline, requisito ciotola ed effetti semplici.
+
+Non anticipare un EventEngine generale, un linguaggio di condizioni/effetti o l'architettura completa prevista più avanti.

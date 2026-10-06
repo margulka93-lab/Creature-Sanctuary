@@ -119,3 +119,59 @@ Direzione concettuale, se il gioco verrà pubblicato:
 - eventuali cosmetici/espansioni sono più coerenti con la fantasy.
 
 La monetizzazione richiederà una decisione separata.
+
+
+## M2 — economia di validazione
+
+Per il primo return loop entra in gioco soltanto **Bacche**.
+
+Legnetti e Fibre restano candidati del concept, ma non vengono introdotti in M2 perché non hanno ancora un sink utile. Aggiungerli ora creerebbe risorse morte.
+
+### Stato iniziale M2
+
+Il prototipo M2 parte con:
+
+- 1 Bacca disponibile;
+- ciotola vuota.
+
+La Bacca iniziale permette al giocatore di provare immediatamente la prima modifica del santuario senza aspettare un ciclo offline preliminare.
+
+### Raccolta offline
+
+Formula provvisoria:
+
+```text
+berryGain = min(8, floor(elapsedOffline / 15 minuti))
+```
+
+- nessun guadagno sotto 15 minuti completi;
+- massimo 8 Bacche per ritorno;
+- il cap equivale a 2 ore di raccolta comune;
+- il tempo reale oltre il cap può ancora rendere eleggibili eventi, ma non aumenta la raccolta comune.
+
+La formula deve restare configurabile e non va trattata come bilanciamento definitivo.
+
+### Primo sink
+
+Lasciare una Bacca nella ciotola:
+
+- costa 1 Bacca;
+- imposta la ciotola a piena;
+- non è consentito se la ciotola è già piena o se il giocatore non ha Bacche;
+- dopo almeno 5 minuti offline la Bacca viene consumata e produce un avvenimento authored nel report.
+
+### Bonus da eventi
+
+Alcuni eventi offline possono concedere **+1 Bacca** oltre alla raccolta aggregata.
+
+Nessun moltiplicatore, upgrade percentuale o crescita esponenziale viene introdotto in M2.
+
+### Domanda economica M2
+
+Il playtest deve verificare soltanto:
+
+- le Bacche sono abbastanza concrete da rendere leggibile il ciclo raccogli → spendi nella ciotola → ritorna?
+- il cap evita che una lunga assenza trasformi il prototipo in un contatore enorme?
+- il report sembra una conseguenza del santuario o una ricevuta di produzione?
+
+Non usare M2 per bilanciare un'economia a lungo termine.

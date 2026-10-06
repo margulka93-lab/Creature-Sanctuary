@@ -163,6 +163,79 @@ Output:
 
 Non deve simulare ogni secondo.
 
+### M2 — implementazione minima
+
+M2 introduce un `OfflineReconciler` stretto, testabile in Node, separato da React/Pixi.
+
+Input minimo:
+
+- GameState salvato;
+- `savedAt` dell'envelope;
+- current time;
+- RandomSource;
+- definizioni degli offline event M2.
+
+Comportamento:
+
+1. calcola `elapsed = max(0, now - savedAt)`;
+2. sotto 5 minuti non genera report;
+3. calcola raccolta comune di Bacche con `min(8, floor(elapsed / 15min))`;
+4. determina 1 o 2 event slot in base alla durata;
+5. se la ciotola è piena, seleziona prima un evento ciotola e la svuota;
+6. riempie eventuali slot restanti con eventi generali eleggibili;
+7. quando possibile esclude gli event id presenti nell'ultimo report;
+8. applica gli effetti semplici degli eventi;
+9. produce un return report strutturato;
+10. NON simula le attività M1 trascorse durante l'assenza.
+
+Il reconciler deve essere idempotente rispetto allo stesso save caricato una sola volta: dopo aver applicato il risultato, salvare immediatamente il nuovo stato/baseline per evitare doppi reward su reload.
+
+### Stato M2
+
+Aggiungere soltanto quanto serve:
+
+- `resources.berries`;
+- stato ciotola `empty | berry`;
+- ultimo return report strutturato o null.
+
+Return report suggerito:
+
+- generatedAt;
+- elapsedMs;
+- berryGain aggregato;
+- eventIds[];
+- acknowledged.
+
+Il testo degli eventi deve provenire dai contenuti tramite event id, non essere duplicato nello stato se non necessario.
+
+### Event data M2
+
+Schema stretto sufficiente alla milestone:
+
+- id;
+- text;
+- weight;
+- minElapsedMs;
+- optional requiresBowlFilled;
+- optional effect `berriesDelta`;
+- optional effect `consumeBowl`.
+
+Non costruire ancora condizioni/effect DSL generici.
+
+### Save schema M2
+
+La nuova shape richiede un bump di schema.
+
+Preferire una migrazione mirata dal save M1 che preservi lo stato corrente di Momo e inizializzi:
+
+- 1 Bacca;
+- ciotola vuota;
+- report null.
+
+Non costruire un framework generico di migration.
+
+Save corrotti o versioni sconosciute continuano a ricadere su uno stato iniziale sicuro.
+
 ## M1 — comportamento autonomo di Momo
 
 M1 estende il wiring esistente senza introdurre un engine generico per tutte le creature.

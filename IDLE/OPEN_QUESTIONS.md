@@ -30,8 +30,13 @@ Queste domande non devono condizionare M0.5–M2.
 
 ## Economia
 
+M2 usa soltanto Bacche come scelta di prototipo. Non è una decisione sull'economia finale.
+
+Restano aperte:
+
 - Esiste una valuta generale?
 - Le sole risorse fisiche sono sufficienti?
+- Quando introdurre Legnetti e Fibre?
 - Quanto deve crescere il costo delle strutture?
 - Serve una forma di sink a lungo termine?
 
@@ -86,10 +91,14 @@ Per ora breeding e genetica complessa sono fuori scope.
 
 ## Diario
 
-- Quanto testo mostrare?
-- Tutto in una schermata o timeline?
-- Il giocatore può consultare eventi precedenti?
-- Quanto storico conservare?
+M2 implementa soltanto l'ultimo report di ritorno, riapribile dopo la chiusura.
+
+Restano aperte:
+
+- quando introdurre una vera timeline?
+- il giocatore può consultare tutti gli eventi precedenti?
+- quanto storico conservare?
+- come organizzare filtri/categorie quando il contenuto cresce?
 
 ## Bestiario
 

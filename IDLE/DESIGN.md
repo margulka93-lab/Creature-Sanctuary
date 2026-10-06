@@ -174,6 +174,47 @@ Possibile compressione:
 
 Le creature non muoiono perché il giocatore non apre il gioco.
 
+### M2 — primo return loop
+
+M2 deve validare la promessa "che cosa è successo mentre non c'ero?", non la profondità economica.
+
+Per questa milestone il ritorno ha due livelli distinti:
+
+1. **raccolta comune aggregata** — una quantità piccola e leggibile di Bacche;
+2. **avvenimenti significativi** — al massimo 1–2 righe authored che raccontano qualcosa di Momo o della Radura.
+
+Non ricostruire ogni attività eseguita durante l'assenza.
+
+#### Soglia e compressione M2
+
+- sotto 5 minuti di assenza: nessun report offline;
+- da 5 a meno di 30 minuti: massimo 1 evento significativo;
+- da 30 minuti in su: massimo 2 eventi significativi;
+- la raccolta comune usa tempo effettivo fino a un massimo di 2 ore;
+- assenze più lunghe non moltiplicano eventi né simulano catene di attività.
+
+Per il prototipo, la raccolta comune è 1 Bacca ogni 15 minuti completi, fino a 8 Bacche per singolo ritorno.
+
+Questi numeri sono parametri di playtest, non economia definitiva.
+
+#### Ciotola come prima modifica del santuario
+
+M2 introduce una sola decisione attiva: lasciare una Bacca nella ciotola.
+
+- stato ciotola: vuota oppure contiene una Bacca;
+- lasciare una Bacca costa 1 Bacca dall'inventario;
+- se la ciotola è piena e il giocatore resta assente almeno 5 minuti, al ritorno la Bacca viene consumata;
+- il report include obbligatoriamente uno degli eventi authored legati alla ciotola;
+- questa è la prima espressione meccanica del tratto `goloso` di Momo.
+
+La ciotola non produce risorse e non è ancora una struttura potenziabile.
+
+#### Repetition control M2
+
+Il report conserva gli event id dell'ultimo ritorno. Quando esistono alternative valide, evitare di selezionare gli stessi event id nel ritorno immediatamente successivo.
+
+Non serve ancora un sistema globale di cooldown per tutti gli eventi.
+
 ## Diario del Santuario
 
 Il Diario è il principale strumento di ritorno offline.
@@ -186,6 +227,22 @@ Deve raccontare in forma compatta:
 - eventuali indizi o scoperte.
 
 Il log tecnico non deve essere esposto direttamente.
+
+### Diario M2
+
+M2 implementa soltanto **l'ultimo report di ritorno**, non una timeline storica completa.
+
+Quando un report viene generato:
+
+- si apre automaticamente una volta;
+- mostra il tempo trascorso in forma umana;
+- mostra le Bacche raccolte;
+- mostra 1–2 avvenimenti significativi;
+- può essere chiuso;
+- un controllo discreto "Diario" permette di riaprire l'ultimo report;
+- il report viene marcato come già visto per non riaprirsi automaticamente a ogni reload.
+
+La cronologia di più ritorni resta fuori scope.
 
 ## Nuove creature
 
