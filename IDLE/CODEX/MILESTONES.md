@@ -94,6 +94,8 @@ Scope:
 
 Pacing prototipo:
 
+- stato iniziale: `doze_tree` all'Albero;
+- movimento fra anchor: 3 s;
 - sonnecchia: peso 5, 8–14 s;
 - osserva ruscello: peso 3, 5–9 s;
 - esplora erba: peso 2, 4–7 s.
