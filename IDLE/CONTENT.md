@@ -191,6 +191,17 @@ Aumenta sicurezza e abilita eventi.
 
 Permette di lasciare una risorsa e influenzare arrivi/comportamenti.
 
+#### Versione M2
+
+La ciotola è presente nella Radura come hotspot/slot fisso.
+
+- vuota all'inizio;
+- il giocatore può lasciare 1 Bacca;
+- la Bacca resta visibile finché non viene consumata;
+- dopo almeno 5 minuti di assenza, il primo return reconciliation consuma la Bacca e genera un evento ciotola.
+
+Non esistono ancora livelli, qualità del cibo o più slot.
+
 ### Angolo morbido
 
 Idea emersa ma non necessaria per il primo prototipo.
@@ -210,6 +221,50 @@ Esempi:
 - una tempesta modifica la Radura;
 - qualcosa si muove vicino al sentiero;
 - tutte le creature si svegliano contemporaneamente.
+
+### Libreria offline M2
+
+M2 usa dieci eventi authored. Sono contenuto di prototipo e possono essere riscritti dopo il playtest.
+
+#### Eventi ciotola
+
+Questi eventi richiedono ciotola piena e consumano la Bacca. Se la ciotola è piena e l'assenza dura almeno 5 minuti, uno di questi eventi occupa obbligatoriamente uno slot del report.
+
+1. `bowl_crumbs` — peso 3  
+   "La ciotola è vuota. Momo ha lasciato tre briciole in fila accanto al bordo."
+
+2. `bowl_shifted` — peso 2  
+   "La bacca è sparita e la ciotola è stata spostata di qualche centimetro verso l'Albero."
+
+3. `bowl_nap` — peso 2  
+   "Momo ha svuotato la ciotola e poi si è addormentato lì vicino."
+
+#### Eventi generali
+
+4. `root_nap` — peso 4, minimo 5 min  
+   "Momo ha passato buona parte del tempo sotto le radici dell'Albero, raggomitolato così stretto da sembrare una pietra chiara."
+
+5. `stream_watch` — peso 3, minimo 5 min  
+   "Momo è rimasto a lungo al Ruscello, fermo a guardare l'acqua come se aspettasse qualcosa."
+
+6. `grass_tunnel` — peso 3, minimo 5 min  
+   "Nell'Erba Alta è comparso un piccolo corridoio schiacciato. Momo finge di non sapere nulla."
+
+7. `false_start` — peso 2, minimo 5 min  
+   "Momo si è avviato verso il Ruscello, poi a metà strada ha cambiato idea ed è tornato all'Albero."
+
+8. `leaf_hat` — peso 2, minimo 5 min  
+   "Per un po' Momo ha avuto una foglia incastrata sulla testa. Non sembra essersene accorto."
+
+9. `berry_under_root` — peso 2, minimo 15 min, effetto +1 Bacca  
+   "Sotto una radice c'era una bacca che prima non avevi visto. Momo ci girava intorno con aria molto innocente."
+
+10. `berry_trail` — peso 1, minimo 30 min, effetto +1 Bacca  
+    "Vicino al sentiero hai trovato una piccola fila di bacche. Una è ancora intatta."
+
+Per M2 l'evento necessita soltanto di un piccolo schema data-driven: id, testo, peso, minimo tempo offline, eventuale requisito ciotola ed effetti limitati alle necessità della milestone.
+
+Non costruire ancora il generic EventEngine previsto per milestone successive.
 
 ## Prima anomalia
 
