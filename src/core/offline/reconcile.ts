@@ -1,7 +1,8 @@
-import type { GameState } from '../state/GameState';
+import { createInitialNibi, type GameState } from '../state/GameState';
+import { applyRelationshipDelta } from '../state/relationship';
 import type { Clock } from '../time/Clock';
 import type { RandomSource } from '../random/RandomSource';
-import { offlineConfig, offlineEvents, type OfflineEvent, type ReturnReport } from './ReturnReport';
+import { offlineConfig, offlineEvents, type DiscoveryId, type OfflineEvent, type ReturnReport } from './ReturnReport';
 
 function choose(candidates: readonly OfflineEvent[], previous: readonly string[], random: RandomSource): OfflineEvent | undefined {
   const alternatives = candidates.filter((event) => !previous.includes(event.id));
@@ -15,7 +16,7 @@ function choose(candidates: readonly OfflineEvent[], previous: readonly string[]
   return pool[pool.length - 1];
 }
 
-/** M2 only: bounded event slots, no simulation of creature activities. Caller persists the new baseline. */
+/** Bounded M2/M3 return, no activity simulation. Caller persists the new baseline. */
 export function reconcileOffline(state: GameState, savedAt: number, clock: Clock, random: RandomSource,
   config = offlineConfig, events: readonly OfflineEvent[] = offlineEvents): { state: GameState; report: ReturnReport | null } {
   const now = clock.now();
@@ -23,21 +24,39 @@ export function reconcileOffline(state: GameState, savedAt: number, clock: Clock
   if (elapsed < config.thresholdMs) return { state, report: null };
   const commonGain = Math.min(config.commonBerryCap, Math.floor(elapsed / config.berryIntervalMs));
   const slots = elapsed < config.twoEventThresholdMs ? 1 : 2;
+  let discoveryId: DiscoveryId | undefined;
+  let discovered = state;
+  if (state.nibiPhase === 'unseen') {
+    discoveryId = 'nibi_tracks';
+    discovered = { ...state, nibiPhase: 'traces' };
+  } else if (state.nibiPhase === 'traces' && state.bowl === 'berry') {
+    discoveryId = 'nibi_arrival';
+    discovered = { ...state, nibiPhase: 'resident', bowl: 'empty',
+      nibi: createInitialNibi({ now: () => now }, random), relations: { momoNibi: 0 } };
+  }
   const previous = state.latestReport?.eventIds ?? [];
   const eligible = events.filter((event) => event.minElapsedMs <= elapsed && event.weight > 0);
   const selected: OfflineEvent[] = [];
-  if (state.bowl === 'berry') {
-    const bowlEvent = choose(eligible.filter((event) => event.requiresBowlFilled), previous, random);
+  const isBowl = (event: OfflineEvent) => event.kind === 'bowl' || event.requiresBowlFilled;
+  if (discoveryId !== 'nibi_arrival' && state.bowl === 'berry') {
+    const bowlEvent = choose(eligible.filter(isBowl), previous, random);
     if (bowlEvent) selected.push(bowlEvent);
   }
-  for (let slot = selected.length; slot < slots; slot++) {
-    const event = choose(eligible.filter((event) => !event.requiresBowlFilled && !selected.some((chosen) => chosen.id === event.id)), previous, random);
+  if (discoveryId !== 'nibi_arrival' && state.nibiPhase === 'resident' && selected.length < slots) {
+    const shared = choose(eligible.filter((event) => event.kind === 'shared' &&
+      state.relations.momoNibi >= (event.minRelation ?? 0) && state.relations.momoNibi <= (event.maxRelation ?? 5)), previous, random);
+    if (shared) selected.push(shared);
+  }
+  for (let slot = selected.length; discoveryId !== 'nibi_arrival' && slot < slots; slot++) {
+    const event = choose(eligible.filter((event) => !isBowl(event) && event.kind !== 'shared' && !selected.some((chosen) => chosen.id === event.id)), previous, random);
     if (!event) break;
     selected.push(event);
   }
   const berriesGained = commonGain + selected.reduce((sum, event) => sum + (event.effects?.berriesDelta ?? 0), 0);
   const report: ReturnReport = { generatedAt: now, elapsedMs: elapsed, berriesGained,
-    eventIds: selected.map((event) => event.id), acknowledged: false };
-  return { state: { ...state, resources: { berries: state.resources.berries + berriesGained },
-    bowl: selected.some((event) => event.effects?.consumeBowl) ? 'empty' : state.bowl, latestReport: report }, report };
+    eventIds: selected.map((event) => event.id), ...(discoveryId ? { discoveryId } : {}), acknowledged: false };
+  const delta = selected.reduce((sum, event) => sum + (event.relationshipDelta ?? 0), 0);
+  return { state: { ...discovered, resources: { berries: state.resources.berries + berriesGained },
+    relations: { momoNibi: applyRelationshipDelta(discovered.relations.momoNibi, delta) },
+    bowl: selected.some((event) => event.effects?.consumeBowl) ? 'empty' : discovered.bowl, latestReport: report }, report };
 }

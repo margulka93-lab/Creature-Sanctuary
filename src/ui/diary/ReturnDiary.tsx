@@ -1,4 +1,4 @@
-import { offlineEvents, type ReturnReport } from '../../core/offline/ReturnReport';
+import { discoveries, offlineEvents, type ReturnReport } from '../../core/offline/ReturnReport';
 
 function elapsedLabel(ms: number): string {
   const minutes = Math.floor(ms / 60000);
@@ -12,6 +12,7 @@ export function ReturnDiary({ report, onClose }: { report: ReturnReport; onClose
   return <section className="return-diary" aria-labelledby="return-title">
     <div className="diary-heading"><h2 id="return-title">Mentre eri via</h2><button onClick={onClose}>Chiudi Diario</button></div>
     <p>Sei stato via per {elapsedLabel(report.elapsedMs)}.</p>
+    {report.discoveryId && <div className="diary-discovery"><h3>{report.discoveryId === 'nibi_arrival' ? 'Un nuovo abitante' : 'Nuove tracce'}</h3><p>{discoveries[report.discoveryId]}</p></div>}
     {report.berriesGained > 0 && <div><h3>Raccolto</h3><p>+{report.berriesGained} {report.berriesGained === 1 ? 'Bacca' : 'Bacche'}</p></div>}
     {report.eventIds.map((id) => <p key={id}>{offlineEvents.find((event) => event.id === id)!.text}</p>)}
   </section>;

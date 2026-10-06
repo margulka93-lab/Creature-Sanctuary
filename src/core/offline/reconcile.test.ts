@@ -81,7 +81,8 @@ describe('M2 bounded return reconciliation', () => {
     const next = reconcileOffline(previous, savedAt, clockAfter(30 * minute), random);
     expect(next.report?.eventIds).toEqual(['grass_tunnel', 'false_start']);
     const bowlFirst = reconcileOffline(leaveBerry(state), savedAt, clockAfter(5 * minute), random).state;
-    const bowlAgain = reconcileOffline(leaveBerry({ ...bowlFirst, resources: { berries: 1 } }), savedAt, clockAfter(5 * minute), random);
+    // Isolate M2 repetition from the new M3 arrival transition.
+    const bowlAgain = reconcileOffline(leaveBerry({ ...bowlFirst, nibiPhase: 'unseen', resources: { berries: 1 } }), savedAt, clockAfter(5 * minute), random);
     expect(bowlAgain.report?.eventIds).toEqual(['bowl_shifted']);
   });
 

@@ -1,0 +1,8 @@
+[
+  { "id": "pair_cautious_circle", "kind": "shared", "weight": 4, "minElapsedMs": 300000, "minRelation": 0, "maxRelation": 1, "relationshipDelta": 1, "text": "Nibi ha girato due volte intorno a Momo prima di sedersi. Momo ha fatto finta di non guardarlo." },
+  { "id": "pair_root_squeeze", "kind": "shared", "weight": 2, "minElapsedMs": 300000, "minRelation": 0, "maxRelation": 3, "relationshipDelta": -1, "text": "Nibi ha provato a infilarsi sotto le radici accanto a Momo. Dopo un minuto Momo si è alzato e se n'è andato con grande dignità." },
+  { "id": "pair_stream_follow", "kind": "shared", "weight": 3, "minElapsedMs": 300000, "minRelation": 1, "maxRelation": 5, "relationshipDelta": 1, "text": "Momo ha seguito Nibi fino al Ruscello, mantenendo per tutto il tragitto una distanza che evidentemente considerava casuale." },
+  { "id": "pair_grass_chase", "kind": "shared", "weight": 3, "minElapsedMs": 300000, "minRelation": 1, "maxRelation": 5, "relationshipDelta": 1, "text": "Per un po' l'Erba Alta si è mossa in due direzioni contemporaneamente. Quando sono riemersi, Nibi sembrava felicissimo e Momo molto meno contrario di quanto volesse mostrare." },
+  { "id": "pair_leaf_mess", "kind": "shared", "weight": 2, "minElapsedMs": 300000, "minRelation": 2, "maxRelation": 5, "relationshipDelta": 1, "text": "Nibi ha trascinato una quantità assurda di foglie vicino all'Albero. Momo le ha spostate una per una. Nibi ha ricominciato." },
+  { "id": "pair_shared_nap", "kind": "shared", "weight": 2, "minElapsedMs": 300000, "minRelation": 3, "maxRelation": 5, "relationshipDelta": 1, "text": "Momo e Nibi si sono addormentati sotto lo stesso tratto d'ombra, abbastanza vicini da sfiorarsi senza accorgersene." }
+]

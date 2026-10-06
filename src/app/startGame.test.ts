@@ -3,7 +3,7 @@ import { createElement, StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import { App } from './App';
 import { startGame } from './startGame';
-import { createInitialState } from '../core/state/GameState';
+import { createInitialNibi, createInitialState, type GameState } from '../core/state/GameState';
 import { acknowledgeReport, leaveBerry } from '../core/state/actions';
 import { serializeSave, saveGame } from '../storage/save';
 import type { SaveAdapter } from '../storage/SaveAdapter';
@@ -25,7 +25,7 @@ describe('startup outside React: exactly once and immediate baseline', () => {
     expect(first.state.resources.berries).toBe(2);
     expect(first.state.latestReport?.eventIds).toEqual(['bowl_crumbs', 'root_nap']);
     const persisted = JSON.parse(adapter.read()!);
-    expect(persisted.schemaVersion).toBe(3);
+    expect(persisted.schemaVersion).toBe(4);
     expect(persisted.savedAt).toBe(clock.now());
     expect(persisted.state).toEqual(first.state);
     const noRandom = { next: (): number => { throw new Error('Unexpected second reconciliation'); } };
@@ -69,5 +69,53 @@ describe('startup outside React: exactly once and immediate baseline', () => {
   it('reports unavailable persistence while keeping a usable initial session', () => {
     const adapter = { read: () => { throw new Error('Blocked'); }, write: () => { throw new Error('Blocked'); } };
     expect(startGame(adapter, initialClock, random).saveAvailable).toBe(false);
+  });
+
+  it('tracks, arrival and subsequent relationship delta persist once before repeated StrictMode rendering', () => {
+    const adapter = memoryAdapter(serializeSave(createInitialState(initialClock, random), initialClock));
+    let now = 301000;
+    const clock = { now: () => now };
+    const noRandom = { next: (): number => { throw new Error('Duplicate reconciliation'); } };
+    const tracks = startGame(adapter, clock, random);
+    expect(tracks.state.nibiPhase).toBe('traces');
+    expect(tracks.state.latestReport?.discoveryId).toBe('nibi_tracks');
+    expect(startGame(adapter, clock, noRandom).state).toEqual(tracks.state);
+    saveGame(adapter, leaveBerry(acknowledgeReport(tracks.state)), clock);
+    now += 300000;
+    const arrival = startGame(adapter, clock, random);
+    expect(arrival.state.nibiPhase).toBe('resident');
+    expect(arrival.state.latestReport?.discoveryId).toBe('nibi_arrival');
+    expect(arrival.state.bowl).toBe('empty');
+    expect(arrival.state.latestReport?.eventIds).toEqual([]);
+    expect(startGame(adapter, clock, noRandom).state).toEqual(arrival.state);
+    saveGame(adapter, acknowledgeReport(arrival.state), clock);
+    now += 300000;
+    const shared = startGame(adapter, clock, random);
+    expect(shared.state.latestReport?.eventIds).toEqual(['pair_cautious_circle']);
+    expect(shared.state.relations.momoNibi).toBe(1);
+    expect(startGame(adapter, clock, noRandom).state).toEqual(shared.state);
+    const stored = adapter.read();
+    const app = createElement(StrictMode, null, createElement(App, { initial: shared, adapter, clock, random: noRandom }));
+    const html = renderToString(app);
+    expect(renderToString(app)).toBe(html);
+    expect(adapter.read()).toBe(stored);
+    expect(html).toContain('Legame Momo–Nibi:');
+    expect(html).toContain('Si stanno abituando');
+    expect(html).not.toContain('momoNibi');
+    expect(html).not.toContain('pair_cautious_circle');
+    expect(html).not.toContain('progressbar');
+  });
+
+  it('resident startup advances only one phase per creature, not an offline activity chain', () => {
+    const initial: GameState = { ...createInitialState(initialClock, random), nibiPhase: 'resident',
+      nibi: createInitialNibi(initialClock, random) };
+    const adapter = memoryAdapter(serializeSave(initial, initialClock));
+    let draws = 0;
+    const first = startGame(adapter, { now: () => 31536001000 }, { next: () => { draws++; return 0; } });
+    expect(draws).toBe(6); // Two phase choices/durations each, one shared + one general.
+    expect(first.state.momo.phase).toBe('moving');
+    expect(first.state.nibi?.phase).toBe('moving');
+    expect(first.state.latestReport?.eventIds).toHaveLength(2);
+    expect(first.state.relations.momoNibi).toBe(1);
   });
 });

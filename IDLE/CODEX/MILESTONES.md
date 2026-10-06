@@ -207,7 +207,17 @@ Non iniziare M3 finché il return loop non è stato osservato in browser.
 
 ## M3 — Nibi e relazioni
 
-**Stato:** design definito, pronta per implementazione.
+**Stato:** implementata e verificata tecnicamente (issue #11); playtest umano di design ancora richiesto.
+
+Schema 4, migrazione M2, discovery, autonomia Nibi, relazione ed eventi condivisi
+sono implementati. Verifica: 140 test in Node, build TypeScript/Vite e browser con
+tre ritorni reali di almeno 5 minuti (tracce, arrivo, primo evento condiviso),
+circa 3 minuti di osservazione, reload/Diario e rendering allo stesso anchor.
+Nessuna nuova dipendenza; parametri Momo e raccolta/limiti M2 invariati.
+
+Queste verifiche confermano l'implementazione, non la domanda di design.
+M3 non è dichiarata design-validata. M4 non è iniziata e resta bloccata fino al
+playtest umano dopo l'arrivo e almeno un report condiviso.
 
 **Domanda da validare:** una seconda creatura e una relazione semplicissima rendono il santuario sensibilmente più vivo e narrativamente interessante?
 

@@ -1,0 +1,10 @@
+{
+  "name": "Nibi",
+  "traits": ["socievole", "vivace", "disordinato"],
+  "moveDurationMs": 2000,
+  "activities": [
+    { "id": "rustle_grass", "label": "si infila nell'Erba Alta", "anchor": "tall_grass", "weight": 4, "minDurationMs": 3000, "maxDurationMs": 6000, "symbol": "!" },
+    { "id": "splash_stream", "label": "gioca vicino al Ruscello", "anchor": "stream", "weight": 3, "minDurationMs": 4000, "maxDurationMs": 7000, "symbol": "≈" },
+    { "id": "visit_tree", "label": "torna a curiosare vicino all'Albero", "anchor": "tree", "weight": 3, "minDurationMs": 3000, "maxDurationMs": 5000, "symbol": "?" }
+  ]
+}

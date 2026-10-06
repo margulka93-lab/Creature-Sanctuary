@@ -11,3 +11,4 @@ button:focus-visible { outline: 3px solid #365fb3; outline-offset: 3px; }
 .return-diary { margin: 24px 0; padding: 20px; border: 1px solid #a4b392; border-radius: 8px; background: #fffdf4; }
 .diary-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .diary-heading h2 { margin: 0; }
+.diary-discovery { margin: 18px 0; padding: 1px 16px; border-left: 3px solid #63854b; background: #eef2e5; }
