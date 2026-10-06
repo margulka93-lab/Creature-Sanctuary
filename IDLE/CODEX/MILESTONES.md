@@ -28,6 +28,14 @@ Output raggiunto:
 
 ## M0.5 — Vertical wiring
 
+**Stato tecnico:** implementata e verificata il 2026-10-06 (issue #2).
+
+Validazione: installazione con Node 24 LTS, server Vite, 19 test in ambiente Node
+e build production riusciti. Nel browser verificati placeholder, due anchor,
+spostamento, reload a riposo e durante il timer, fallback per save mancante/corrotto.
+Il completamento riguarda soltanto il wiring tecnico. La domanda di design resta
+da valutare con una revisione del risultato prima di autorizzare M1.
+
 **Domanda da validare:** l'intera catena tecnica più piccola funziona senza introdurre complessità inutile?
 
 Scope:

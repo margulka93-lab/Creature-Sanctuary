@@ -1,0 +1,7 @@
+{
+  "anchors": [
+    { "id": "tree", "label": "Albero", "x": 220, "y": 260 },
+    { "id": "stream", "label": "Ruscello", "x": 580, "y": 260 }
+  ],
+  "moveDurationMs": 3000
+}
