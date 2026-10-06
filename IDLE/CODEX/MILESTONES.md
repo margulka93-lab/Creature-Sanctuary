@@ -26,15 +26,12 @@ Output raggiunto:
 - TECH_SPEC aggiornata;
 - nessuna feature gameplay ancora richiesta.
 
-## M0.5 — Vertical wiring
+## M0.5 — Vertical wiring ✅
 
-**Stato tecnico:** implementata e verificata il 2026-10-06 (issue #2).
+**Stato:** implementata, revisionata e accettata il 2026-10-06 (issue #2, PR #3).
 
-Validazione: installazione con Node 24 LTS, server Vite, 19 test in ambiente Node
-e build production riusciti. Nel browser verificati placeholder, due anchor,
-spostamento, reload a riposo e durante il timer, fallback per save mancante/corrotto.
-Il completamento riguarda soltanto il wiring tecnico. La domanda di design resta
-da valutare con una revisione del risultato prima di autorizzare M1.
+La catena React → Pixi → core TypeScript → timer → SaveAdapter → reload funziona
+senza introdurre complessità fuori scope. La base tecnica è sufficiente per M1.
 
 **Domanda da validare:** l'intera catena tecnica più piccola funziona senza introdurre complessità inutile?
 
@@ -77,31 +74,65 @@ Success criteria:
 
 ## M1 — Momo in una Radura
 
-**Domanda da validare:** possiamo far percepire una creatura viva con pochissima tecnologia?
+**Stato:** design definito, pronta per implementazione.
+
+**Domanda da validare:** possiamo far percepire Momo come una creatura autonoma, timida ma curiosa, con pochissima tecnologia?
 
 Scope:
 
-- una scena Radura;
-- Momo;
-- pochi anchor point;
-- 2–3 stati visivi/comportamentali;
-- timer semplice;
-- stato salvabile;
-- reload corretto.
+- la Radura placeholder esistente;
+- tre anchor: Albero, Ruscello, Erba Alta;
+- tre attività authored: sonnecchia, osserva il ruscello, esplora l'erba;
+- scelta autonoma tramite pesi;
+- intervalli di durata variabili;
+- repetition control minimo: evitare la stessa attività due volte di seguito quando possibile;
+- movimento fra anchor;
+- RNG iniettabile;
+- stato persistente e reload coerente;
+- feedback visivo/testuale placeholder sufficiente a distinguere le attività;
+- rimozione dei comandi player-facing "Vai a...".
+
+Pacing prototipo:
+
+- sonnecchia: peso 5, 8–14 s;
+- osserva ruscello: peso 3, 5–9 s;
+- esplora erba: peso 2, 4–7 s.
+
+Questi valori servono soltanto a rendere leggibile il playtest.
 
 Niente:
 
 - Nibi;
 - relazioni;
-- Bestiario completo;
+- economia o bacche;
+- fame/energia/bisogni;
+- trait engine generico;
+- EventEngine completo;
+- offline simulation;
+- Diario;
+- Bestiario;
 - meteo;
-- mistero.
+- mistero;
+- asset finali.
 
-Success criteria:
+Success criteria tecnici:
 
-- Momo cambia attività/posizione in modo plausibile;
-- il suo stato sopravvive a reload;
-- il progetto è semplice da modificare.
+- Momo sceglie e completa attività senza input del giocatore;
+- tempo e RNG restano testabili/iniettabili;
+- reload non resetta arbitrariamente Momo;
+- una lunga assenza non viene simulata attività-per-attività;
+- nessuna logica di comportamento vive in React/Pixi;
+- il progetto resta piccolo e leggibile.
+
+Success criteria di design da playtest umano:
+
+- in 1–2 minuti si osservano almeno due comportamenti diversi senza cliccare;
+- Momo non appare come un metronomo che cambia posto a intervalli identici;
+- l'Albero risulta una preferenza, non una prigione;
+- Ruscello/Erba comunicano curiosità;
+- l'impressione complessiva è più vicina a "sta facendo cose sue" che a "sta eseguendo una demo".
+
+Non dichiarare M1 validata finché il risultato non viene osservato nel browser.
 
 ## M2 — Primo idle loop
 
