@@ -2,24 +2,70 @@
 
 Le milestone sono ordinate per validare il rischio principale prima di produrre molto contenuto.
 
-## M0 — Foundation decision
+## M0 — Foundation decision ✅
 
 **Obiettivo:** scegliere il minimo stack tecnico.
 
-Da decidere prima del coding sostanziale:
+Decisioni approvate:
 
-- target iniziale;
-- framework/runtime;
-- rendering 2D;
-- formato dei contenuti;
-- persistenza locale;
-- test runner.
+- target browser/web, desktop-first responsive;
+- TypeScript;
+- React 19.x;
+- Vite 8.x;
+- PixiJS 8.x;
+- Vitest 5.x;
+- npm;
+- contenuti JSON;
+- localStorage tramite SaveAdapter;
+- core TypeScript puro separato da React/Pixi.
 
-Output:
+Output raggiunto:
 
-- progetto avviabile;
-- README tecnico o aggiornamento TECH_SPEC;
-- nessuna feature di gameplay obbligatoria.
+- stack definito;
+- confini architetturali definiti;
+- TECH_SPEC aggiornata;
+- nessuna feature gameplay ancora richiesta.
+
+## M0.5 — Vertical wiring
+
+**Domanda da validare:** l'intera catena tecnica più piccola funziona senza introdurre complessità inutile?
+
+Scope:
+
+- bootstrap Vite + React + TypeScript;
+- canvas PixiJS dentro la shell React;
+- Radura placeholder;
+- Momo placeholder;
+- almeno due anchor point;
+- `GameState` minimo in TypeScript puro;
+- timer/clock iniettabile;
+- passaggio di Momo fra anchor;
+- `SaveAdapter` localStorage;
+- save envelope versionato;
+- reload coerente;
+- test minimi del core e del save;
+- README con comandi di avvio/test.
+
+Niente:
+
+- asset definitivi;
+- economia;
+- offline reward;
+- Diario;
+- Nibi;
+- relazioni;
+- Bestiario;
+- state library aggiuntiva;
+- backend.
+
+Success criteria:
+
+- `npm install`, `npm run dev`, `npm test` funzionano;
+- la pagina mostra la Radura e Momo placeholder;
+- Momo può cambiare anchor tramite una regola del core;
+- reload mantiene uno stato coerente;
+- i test del core non richiedono Pixi o React;
+- l'architettura resta leggibile e piccola.
 
 ## M1 — Momo in una Radura
 
