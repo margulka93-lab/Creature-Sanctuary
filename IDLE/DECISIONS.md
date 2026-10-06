@@ -219,3 +219,54 @@ Conserva l'ultimo return report, lo apre automaticamente una volta e permette di
 M2 usa eventi data-driven limitati alle necessità del return loop: peso, minimo tempo offline, requisito ciotola ed effetti semplici.
 
 Non anticipare un EventEngine generale, un linguaggio di condizioni/effetti o l'architettura completa prevista più avanti.
+
+
+## D-030 — M2 accettata per proseguire
+
+Dopo implementazione e verifica del return loop, il progetto procede a M3 su indicazione esplicita dell'utente.
+
+Questo non congela il bilanciamento di Bacche, frequenze o testi del Diario. M2 resta materiale di prototipo, ma il return loop è considerato sufficientemente valido per testare la presenza di una seconda creatura.
+
+## D-031 — Nibi arriva tramite una progressione in due fasi
+
+Nibi non viene comprato né appare immediatamente.
+
+M3 usa:
+
+- `unseen` → primo ritorno valido: tracce;
+- `traces` → ritorno valido con Bacca nella ciotola: arrivo e permanenza.
+
+L'arrivo consuma la Bacca e sostituisce il normale bowl event di quel ritorno.
+
+## D-032 — Nibi è più mobile di Momo
+
+Nibi usa tre attività authored e un movimento provvisorio di 2 secondi.
+
+Il suo profilo deve comunicare `vivace`, `socievole` e `disordinato` senza introdurre un trait engine generico.
+
+## D-033 — Relazione Momo–Nibi M3 su scala 0–5
+
+M3 usa una singola relazione condivisa e non direzionale, clampata fra 0 e 5.
+
+Il numero resta nascosto.
+
+Categorie player-facing:
+
+- 0: si stanno studiando;
+- 1–2: si stanno abituando;
+- 3–4: si cercano;
+- 5: amici.
+
+Non esiste decadimento in M3.
+
+## D-034 — Gli eventi condivisi modificano il legame
+
+Dopo l'arrivo di Nibi, gli shared event possono applicare delta `+1` o `-1` e diventare eleggibili in base a soglie di relazione.
+
+Il sistema deve dimostrare che la relazione cambia il contenuto disponibile, non soltanto un'etichetta UI.
+
+## D-035 — M3 non è ancora la content architecture definitiva
+
+È consentita una generalizzazione minima del behavior scheduler per gestire Momo e Nibi senza duplicazione fragile.
+
+Non costruire ancora il ContentRegistry generale, EventEngine universale, DSL di requisiti/effetti o schema definitivo previsti per M4.
