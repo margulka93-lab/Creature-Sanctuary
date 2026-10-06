@@ -1,0 +1,8 @@
+{
+  "traits": ["timido", "curioso", "goloso"],
+  "activities": [
+    { "id": "doze_tree", "label": "sonnecchia sotto l’Albero", "anchor": "tree", "weight": 5, "minDurationMs": 8000, "maxDurationMs": 14000, "symbol": "zZ" },
+    { "id": "watch_stream", "label": "osserva il Ruscello", "anchor": "stream", "weight": 3, "minDurationMs": 5000, "maxDurationMs": 9000, "symbol": "≈" },
+    { "id": "explore_grass", "label": "esplora l’Erba Alta", "anchor": "tall_grass", "weight": 2, "minDurationMs": 4000, "maxDurationMs": 7000, "symbol": "?" }
+  ]
+}

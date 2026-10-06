@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createInitialState, startMove } from '../core/state/GameState';
+import { advanceTime, createInitialState } from '../core/state/GameState';
 import { LocalStorageSaveAdapter, SAVE_KEY } from './LocalStorageSaveAdapter';
 import type { SaveAdapter } from './SaveAdapter';
 import { loadGame, saveGame, serializeSave } from './save';
@@ -8,60 +8,90 @@ function memoryAdapter(raw: string | null = null): SaveAdapter {
   return { read: () => raw, write: (save) => { raw = save; } };
 }
 const clock = { now: () => 1000 };
+const random = { next: () => 0 };
+const noRandom = { next: (): number => { throw new Error('Unexpected RNG consumption'); } };
+const initial = createInitialState(clock, random);
+const moving = advanceTime(initial, { now: () => initial.momo.deadline }, random);
+const envelope = (state: unknown, schemaVersion = 2) => JSON.stringify({ schemaVersion, savedAt: 1000, state });
 
-describe('versioned save', () => {
-  it('serializes the version, timestamp and minimal state', () => {
-    const state = createInitialState();
-    expect(JSON.parse(serializeSave(state, clock))).toEqual({ schemaVersion: 1, savedAt: 1000, state });
+describe('M1 versioned save', () => {
+  it('serializes schema 2, timestamp and state', () => {
+    expect(JSON.parse(serializeSave(initial, clock))).toEqual({ schemaVersion: 2, savedAt: 1000, state: initial });
   });
 
-  it('round-trips a valid saved position', () => {
+  it('round-trips an in-progress settled phase without drawing new randomness', () => {
     const adapter = memoryAdapter();
-    const state = { momo: { currentAnchor: 'stream' as const, move: null } };
-    expect(saveGame(adapter, state, clock)).toBe(true);
-    expect(loadGame(adapter, clock)).toEqual(state);
+    expect(saveGame(adapter, initial, clock)).toBe(true);
+    expect(loadGame(adapter, { now: () => 2000 }, noRandom)).toEqual(initial);
   });
 
-  it('restores a pending timer and finishes it once its deadline has passed', () => {
-    const state = startMove(createInitialState(), 'stream', clock);
-    const adapter = memoryAdapter(serializeSave(state, clock));
-    expect(loadGame(adapter, { now: () => 2000 })).toEqual(state);
-    expect(loadGame(adapter, { now: () => 4000 }).momo).toEqual({ currentAnchor: 'stream', move: null });
+  it('round-trips an in-progress movement, including its chosen activity duration', () => {
+    const adapter = memoryAdapter(serializeSave(moving, { now: () => 9500 }));
+    expect(loadGame(adapter, { now: () => 10000 }, noRandom)).toEqual(moving);
   });
 
-  it('preserves remaining duration if the clock went backwards since saving', () => {
-    const state = startMove(createInitialState(), 'stream', clock);
-    const adapter = memoryAdapter(serializeSave(state, { now: () => 2000 }));
-    expect(loadGame(adapter, { now: () => 500 }).momo.move?.completesAt).toBe(2500);
+  it('resumes a long-expired settled phase with only one transition', () => {
+    let draws = 0;
+    const loaded = loadGame(memoryAdapter(serializeSave(initial, clock)), { now: () => 1_000_000 }, {
+      next: () => { draws++; return 0; },
+    });
+    expect(draws).toBe(2);
+    expect(loaded.momo.phase).toBe('moving');
+    expect(loaded.momo.deadline).toBe(1_003_000);
+  });
+
+  it('resumes a long-expired movement into the intended activity from now', () => {
+    const loaded = loadGame(memoryAdapter(serializeSave(moving, { now: () => 9500 })), { now: () => 1_000_000 }, noRandom);
+    expect(loaded.momo).toEqual({ phase: 'settled', currentAnchor: 'stream', currentActivityId: 'watch_stream',
+      phaseStartedAt: 1_000_000, deadline: 1_005_000 });
+  });
+
+  it('rebases a backward clock on reload and keeps a bounded valid phase', () => {
+    const adapter = memoryAdapter(serializeSave(moving, { now: () => 10000 }));
+    const loaded = loadGame(adapter, { now: () => 5000 }, noRandom);
+    expect(loaded.momo.phaseStartedAt).toBe(4000);
+    expect(loaded.momo.deadline).toBe(7000);
+    expect(loadGame(memoryAdapter(serializeSave(initial, { now: () => 2000 })), { now: () => 0 }, noRandom).momo.deadline).toBe(8000);
+  });
+
+  it('explicitly resets a valid M0.5 save to initial M1 activity', () => {
+    const legacy = envelope({ momo: { currentAnchor: 'stream', move: null } }, 1);
+    expect(loadGame(memoryAdapter(legacy), clock, random)).toEqual(initial);
   });
 
   it.each([
-    null, '', '{broken', 'null', '[]', '{}',
-    JSON.stringify({ schemaVersion: 2, savedAt: 1000, state: createInitialState() }),
-    JSON.stringify({ schemaVersion: 1, savedAt: -1, state: createInitialState() }),
-    JSON.stringify({ schemaVersion: 1, savedAt: 1000, state: { momo: { currentAnchor: 'unknown', move: null } } }),
-    JSON.stringify({ schemaVersion: 1, savedAt: 1000, state: { momo: { currentAnchor: 'tree', move: {} } } }),
-    JSON.stringify({ schemaVersion: 1, savedAt: 1000, state: { momo: { currentAnchor: 'tree', move: { targetAnchor: 'stream', completesAt: null } } } }),
+    null, '', '{broken', 'null', '[]', '{}', envelope(initial, 99),
+    envelope({ momo: { ...initial.momo, currentAnchor: 'unknown' } }),
+    envelope({ momo: { ...initial.momo, currentActivityId: 'unknown' } }),
+    envelope({ momo: { ...initial.momo, currentAnchor: 'stream' } }),
+    envelope({ momo: { ...initial.momo, phase: 'invalid' } }),
+    envelope({ momo: { ...initial.momo, deadline: -1 } }),
+    envelope({ momo: { ...initial.momo, deadline: 1000 } }),
+    envelope({ momo: { ...moving.momo, activityDurationMs: 1 } }),
+    envelope({ momo: { ...moving.momo, targetActivityId: 'doze_tree' } }),
+    envelope({ momo: { ...moving.momo, deadline: null } }),
+    JSON.stringify({ schemaVersion: 2, savedAt: -1, state: initial }),
+    JSON.stringify({ schemaVersion: 2, savedAt: 1000.5, state: initial }),
+    JSON.stringify({ schemaVersion: 2, savedAt: 0, state: initial }),
   ])('falls back safely for missing/invalid save: %s', (raw) => {
-    expect(loadGame(memoryAdapter(raw), clock)).toEqual(createInitialState());
+    expect(loadGame(memoryAdapter(raw), clock, random)).toEqual(initial);
   });
 
-  it('handles unavailable storage and write failures', () => {
+  it('handles blocked storage and quota failures', () => {
     const adapter = new LocalStorageSaveAdapter(() => { throw new Error('Storage blocked'); });
-    expect(loadGame(adapter, clock)).toEqual(createInitialState());
-    expect(saveGame(adapter, createInitialState(), clock)).toBe(false);
-    const full = { read: () => null, write: () => { throw new Error('Quota exceeded'); } };
-    expect(saveGame(full, createInitialState(), clock)).toBe(false);
+    expect(loadGame(adapter, clock, random)).toEqual(initial);
+    expect(saveGame(adapter, initial, clock)).toBe(false);
+    expect(saveGame({ read: () => null, write: () => { throw new Error('Quota'); } }, initial, clock)).toBe(false);
   });
 
-  it('uses the localStorage adapter key for read/write', () => {
+  it('keeps the existing localStorage key', () => {
     const values = new Map<string, string>();
     const adapter = new LocalStorageSaveAdapter(() => ({
       getItem: (key) => values.get(key) ?? null,
       setItem: (key, value) => { values.set(key, value); },
     }));
-    saveGame(adapter, createInitialState(), clock);
+    saveGame(adapter, initial, clock);
     expect(values.has(SAVE_KEY)).toBe(true);
-    expect(loadGame(adapter, clock)).toEqual(createInitialState());
+    expect(loadGame(adapter, clock, noRandom)).toEqual(initial);
   });
 });
