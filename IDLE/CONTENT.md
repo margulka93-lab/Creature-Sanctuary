@@ -56,6 +56,8 @@ Per la prima validazione Momo usa soltanto tre comportamenti:
 
 Questi valori servono a leggere il comportamento durante il prototipo e non sono numeri di bilanciamento definitivo.
 
+Stato iniziale M1: Momo parte in `doze_tree` sotto l'Albero. Il movimento fra anchor mantiene provvisoriamente i 3 secondi già usati in M0.5; anche questo valore resta da playtestare.
+
 L'Albero deve risultare chiaramente il luogo preferito. Ruscello ed Erba Alta mostrano invece che la curiosità può vincere temporaneamente sulla prudenza.
 
 Feedback placeholder accettabile:
