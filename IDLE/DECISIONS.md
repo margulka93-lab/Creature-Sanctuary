@@ -270,3 +270,38 @@ Il sistema deve dimostrare che la relazione cambia il contenuto disponibile, non
 È consentita una generalizzazione minima del behavior scheduler per gestire Momo e Nibi senza duplicazione fragile.
 
 Non costruire ancora il ContentRegistry generale, EventEngine universale, DSL di requisiti/effetti o schema definitivo previsti per M4.
+
+
+## D-036 — Creature Sanctuary è prima di tutto creature-raising
+
+Il santuario e il management sono strumenti della fantasy centrale: allevare, conoscere e influenzare creature autonome.
+
+Il gioco non deve ridursi né a un acquario da osservare né a un gestionale del recinto con creature decorative.
+
+## D-037 — Il giocatore influenza lo sviluppo tramite condizioni
+
+Il giocatore non impartisce ordini continui alle creature.
+
+Cibo, ambiente, relazioni, oggetti, eventi ed esplorazioni possono diventare input che modificano comportamenti, preferenze, scoperte o sviluppo.
+
+Il modello preciso di evoluzioni/varianti è ancora OPEN e non va inventato nel codice.
+
+## D-038 — Risorse e strutture sono subordinate alle creature
+
+Una nuova risorsa o struttura deve avere un lavoro concreto nella vita, scoperta, attrazione o sviluppo delle creature.
+
+Evitare sistemi economici che esistono soltanto per aumentare produzione o numeri.
+
+## D-039 — M3 resta valido come fondazione sociale, non come destinazione
+
+Nibi, il suo arrivo progressivo e la relazione Momo–Nibi restano nello scope corrente.
+
+M3 serve a dimostrare autonomia differenziata e influenza sociale fra creature. Non rappresenta ancora il loop completo del giocatore con le creature.
+
+Dopo M3 il progetto deve validare il creature raising prima di espandere ulteriormente il cast.
+
+## D-040 — Niente breeding/genetica complessa nel primo vertical slice
+
+Il concept originale può includere in futuro varianti, evoluzioni e possibili tratti ereditabili, ma un sistema di breeding/genetica complesso è fuori scope finché non viene dimostrato che un modello di crescita molto più piccolo è divertente.
+
+Non confondere questa esclusione con l'esclusione della crescita/trasformazione delle creature: quest'ultima resta centrale.

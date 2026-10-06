@@ -6,9 +6,11 @@
 
 Loop principale:
 
-**osserva → raccogli → modifica il santuario → lascia agire le creature → torna → scopri conseguenze → decidi di nuovo**
+**osserva → interagisci/prepara condizioni → lascia agire le creature → torna → scopri conseguenze e cambiamenti → scegli come accompagnarne lo sviluppo → ripeti**
 
-Una sessione breve deve poter durare 3–5 minuti. Una sessione più lunga può includere costruzione, Bestiario, esplorazioni e lettura degli eventi.
+Una sessione breve deve poter durare 3–5 minuti. Una sessione più lunga può includere cura/interazione con gli individui, modifiche all'habitat, Bestiario, esplorazioni e lettura degli eventi.
+
+Il santuario non è un obiettivo gestionale separato dalle creature: le sue modifiche devono soprattutto cambiare opportunità, comportamenti, scoperte e possibili sviluppi delle creature.
 
 ## Area iniziale
 
@@ -315,13 +317,43 @@ Il return report dell'arrivo deve lasciare spazio narrativo all'arrivo: non aggi
 
 Dopo l'arrivo, Nibi resta residente. Non implementare perdita/fuga della creatura in M3.
 
+## Creature raising e sviluppo
+
+Questo è un pilastro centrale del concept, ma il modello esatto non è ancora deciso.
+
+Il giocatore deve poter **allevare/influenzare** una creatura senza controllarne ogni azione. Possibili input di sviluppo:
+
+- cibo e oggetti offerti;
+- caratteristiche dell'habitat;
+- relazioni con altre creature;
+- esperienze/eventi vissuti;
+- esplorazioni e luoghi frequentati;
+- comportamenti osservati o appresi.
+
+Possibili conseguenze da validare, senza considerarle ancora tutte DECIDED:
+
+- nuove preferenze o routine;
+- nuovi comportamenti;
+- scoperte nel Bestiario;
+- tratti che si manifestano o cambiano;
+- varianti/aspetti/forme legate alle condizioni di crescita;
+- accesso a nuove esplorazioni o interazioni.
+
+Non introdurre ora genetica complessa, breeding system o alberi evolutivi rigidi. Prima va costruito un piccolo vertical slice che dimostri che influenzare lo sviluppo di Momo è divertente e leggibile.
+
+### Rapporto diretto giocatore ↔ creatura
+
+L'interazione diretta resta parte del concept, ma la sua forma definitiva è OPEN. Deve supportare la fantasy di allevamento e conoscenza dell'individuo, non diventare spam di click o un bisogno punitivo.
+
+Potrà includere azioni contestuali come offrire qualcosa, giocare, attirare l'attenzione o osservare da vicino, con reazioni dipendenti da individuo/stato/familiarità. Queste azioni non sono ancora scope di M3.
+
 ## Costruzione
 
 Per il primo scope non esiste costruzione libera.
 
 La mappa usa slot prestabiliti. Questo evita drag & drop, collisioni, coordinate persistenti e problemi di layout.
 
-Le strutture modificano condizioni e probabilità più che produrre valuta passivamente.
+Le strutture modificano condizioni e probabilità più che produrre valuta passivamente. La loro funzione principale deve essere creare condizioni di vita/sviluppo per le creature, non generare una catena economica fine a se stessa.
 
 ## Bestiario
 
@@ -339,7 +371,7 @@ Le informazioni si sbloccano tramite eventi/flag.
 
 ## Esplorazioni
 
-Le esplorazioni sono timer, non mappe giocabili.
+Le esplorazioni sono timer, non mappe giocabili. Oltre a restituire materiali/scoperte, in prospettiva devono poter diventare **esperienze della creatura** che influenzano conoscenza, comportamenti o sviluppo.
 
 Flusso:
 

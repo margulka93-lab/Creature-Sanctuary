@@ -6,25 +6,26 @@
 
 ## High concept
 
-Creature Sanctuary è un idle/cozy management game 2D in cui il giocatore cura un piccolo santuario naturale abitato da creature fantastiche.
+Creature Sanctuary è un **creature-raising idle/cozy 2D** in cui il giocatore cura un piccolo santuario naturale e accompagna creature fantastiche nella loro crescita, scoperta e sviluppo senza controllarle come unità.
 
-Il santuario continua a vivere durante l'assenza del giocatore. Le creature svolgono attività, raccolgono materiali, interagiscono fra loro, sviluppano semplici relazioni, producono eventi e possono attirare nuove specie.
+Il santuario continua a vivere durante l'assenza del giocatore. Le creature svolgono attività, raccolgono materiali, interagiscono fra loro, sviluppano relazioni, producono eventi, esplorano e possono attirare nuove specie. Le condizioni create dal giocatore — ambiente, cibo, compagni, oggetti ed esperienze — devono poter influenzare ciò che una creatura impara, preferisce, manifesta o può diventare.
 
-Il gioco non vuole essere un clicker né una simulazione biologica complessa. La sensazione di "mondo vivo" deve emergere dalla combinazione di sistemi piccoli e controllabili: stati, timer, tabelle di probabilità, condizioni, eventi scritti, variazioni dello scenario e progressione offline.
+Il gioco non vuole essere un clicker né una simulazione biologica complessa. La sensazione di "mondo vivo" e di crescita deve emergere dalla combinazione di sistemi piccoli e controllabili: stati, timer, tabelle di probabilità, condizioni, eventi scritti, variazioni dello scenario, progressione offline e conseguenze persistenti sulle creature.
 
 ## Fantasy del giocatore
 
-Il giocatore non è il proprietario di una collezione di unità produttive. È il custode di un luogo che diventa progressivamente ospitale, misterioso e personale.
+Il giocatore non è il proprietario di una collezione di unità produttive. È il custode/allevatore di creature autonome: prepara condizioni, offre opportunità, osserva reazioni, scopre preferenze e accompagna lo sviluppo degli individui. Il santuario è lo strumento con cui il giocatore influenza la loro vita, non il vero protagonista al posto loro.
 
 Principio guida:
 
 > Non compri le creature. Crei un luogo in cui decidono di restare.
 
-La gratificazione deve derivare soprattutto da tre domande:
+La gratificazione deve derivare soprattutto da quattro domande:
 
 1. Che cosa hanno fatto mentre non c'ero?
-2. Chi o che cosa arriverà se modifico il santuario?
-3. Che cosa si nasconde davvero in questo luogo?
+2. Come stanno cambiando le creature in risposta a ciò che faccio?
+3. Chi o che cosa arriverà se modifico il santuario?
+4. Che cosa si nasconde davvero in questo luogo?
 
 ## Promessa emotiva
 
@@ -50,19 +51,25 @@ La trama resta secondaria rispetto al santuario. Deve creare direzione e domande
 
 Ogni creatura appartiene a una specie ma deve essere percepita come individuo attraverso nome, tratti, preferenze, routine e relazioni.
 
-### 2. Offline come contenuto
+### 2. Crescita influenzata, non comandata
+
+Il giocatore deve poter incidere sulle creature senza impartire ordini continui. Ambiente, cibo, relazioni, esplorazioni ed eventi possono aprire comportamenti, preferenze, scoperte o sviluppi differenti.
+
+La forma definitiva di evoluzioni/varianti non è ancora decisa. Il principio invece è centrale: allevare deve significare scoprire cosa un individuo può diventare nelle condizioni create dal giocatore.
+
+### 3. Offline come contenuto
 
 L'assenza del giocatore è parte del loop. Il sistema genera risultati e piccoli avvenimenti coerenti con il tempo trascorso.
 
-### 3. Scoperta indiretta
+### 4. Scoperta indiretta
 
 Il gioco preferisce indizi, osservazioni e Bestiario progressivo a formule completamente esplicite.
 
-### 4. Profondità da sistemi piccoli
+### 5. Profondità da sistemi piccoli
 
 Niente simulazione totale. La varietà deve nascere dalla combinazione di pochi sistemi data-driven.
 
-### 5. Scope realistico
+### 6. Scope realistico
 
 Il progetto deve essere costruibile da una singola persona con assistenza AI/Codex. Niente 3D e niente feature che richiedano uno studio professionale.
 
@@ -72,6 +79,8 @@ Il progetto deve essere costruibile da una singola persona con assistenza AI/Cod
 - non è un open world;
 - non è un gestionale industriale;
 - non è un tamagotchi punitivo;
+- non è un acquario passivo in cui il giocatore può soltanto guardare;
+- non è un allevamento basato su ordini diretti e micromanagement continuo;
 - non è un gacha di creature;
 - non richiede AI generativa runtime;
 - non richiede simulazione fisica o pathfinding avanzato;

@@ -423,6 +423,33 @@ React:
 - non mostra il numero;
 - nessun comando diretto sulle creature.
 
+## M3.5 — Creature Raising vertical slice
+
+**Status tecnico:** non implementation-ready. Prima va chiuso il design.
+
+Questa milestone deve validare il primo cambiamento persistente di una creatura causato indirettamente dalle condizioni create dal giocatore.
+
+Vincoli già approvati:
+
+- creature raising è parte centrale della fantasy;
+- il giocatore influenza, non micromanage;
+- input plausibili includono cibo, habitat, relazioni, eventi ed esplorazioni;
+- il risultato deve essere player-perceivable e persistente;
+- niente breeding/genetica complessa;
+- niente albero evolutivo generico prima di una decisione di design;
+- il sistema deve restare serializzabile, data-driven dove utile e testabile con Clock/RNG se necessario.
+
+Prima del Codex handoff M3.5 servono decisioni esplicite su:
+
+- input esatti;
+- stato persistente minimo;
+- primo outcome su Momo;
+- feedback/UI;
+- reversibilità/permanenza;
+- condizioni di successo del playtest.
+
+Non implementare M3.5 mentre si sta eseguendo M3.
+
 ## SaveSystem
 
 Definire un'interfaccia `SaveAdapter`.
