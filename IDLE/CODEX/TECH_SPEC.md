@@ -299,6 +299,130 @@ Rimuovere i pulsanti M0.5 che comandano direttamente lo spostamento di Momo.
 
 Un testo discreto di stato è ammesso per il prototipo. Evitare popup e feed di log.
 
+## M3 — Nibi e relazione Momo–Nibi
+
+M3 estende il prototipo senza anticipare M4.
+
+### Stato M3
+
+Aggiungere soltanto:
+
+- `nibiPhase: "unseen" | "traces" | "resident"`;
+- stato comportamento Nibi nullable finché non è residente;
+- `relations.momoNibi` intero 0–5.
+
+Quando Nibi non è residente, nessun timer/comportamento Nibi deve avanzare.
+
+### Save schema M3
+
+Bump mirato schema 3 → schema 4.
+
+Migrazione schema 3:
+
+- preservare Momo;
+- preservare Bacche;
+- preservare ciotola;
+- preservare ultimo report M2;
+- inizializzare `nibiPhase = "unseen"`;
+- Nibi state null;
+- relazione 0.
+
+Non costruire migration framework generico.
+
+### Behavior scheduler
+
+È permessa una piccola estrazione riutilizzabile delle regole già usate da Momo:
+
+- profilo attività;
+- selezione pesata;
+- durata;
+- repetition control;
+- moving/settled;
+- Clock e RandomSource iniettabili.
+
+Obiettivo: applicare la stessa meccanica a Momo e Nibi con parametri diversi.
+
+Non costruire un ECS, un registry universale o un sistema pensato per decine di specie.
+
+Il comportamento Nibi viene creato soltanto al passaggio a `resident`.
+
+### Nibi content
+
+Profilo M3:
+
+- `rustle_grass`: tall_grass, peso 4, 3–6 s;
+- `splash_stream`: stream, peso 3, 4–7 s;
+- `visit_tree`: tree, peso 3, 3–5 s;
+- movement duration: 2 s;
+- initial activity on arrival: `visit_tree`.
+
+### Discovery / arrival
+
+Estendere il return report con una discovery opzionale, per esempio `discoveryId`, separata dagli eventIds ricorrenti.
+
+Regole:
+
+- `unseen` + first valid return → `nibi_tracks`, phase `traces`;
+- `traces` + valid return + bowl `berry` → `nibi_arrival`, consume bowl, phase `resident`, initialize Nibi behavior and relation 0.
+
+`nibi_arrival` sostituisce il normale bowl event di quel return e non deve essere accompagnato da altri eventi ricorrenti.
+
+`nibi_tracks` può convivere con il normale M2 return loop.
+
+La discovery deve essere one-shot per stato: reload immediato non deve riapplicarla.
+
+### Relazione
+
+Aggiungere helper puro per:
+
+- clamp 0–5;
+- applicare delta;
+- mappare valore → categoria qualitativa.
+
+Il numero non deve essere mostrato nella UI player-facing.
+
+### Shared offline events
+
+Estendere in modo stretto i dati evento M3 con campi opzionali sufficienti:
+
+- `kind: "general" | "bowl" | "shared"`;
+- `minRelation`;
+- `maxRelation`;
+- `relationshipDelta`.
+
+Non introdurre DSL generica.
+
+Dopo Nibi residente:
+
+- evento bowl mantiene priorità se bowl piena;
+- se rimane uno slot, selezionare al massimo un shared event eleggibile prima dei general event;
+- shared event applica il relationship delta una sola volta;
+- repetition control esistente continua a valere.
+
+### Return report
+
+Può evolvere per contenere:
+
+- `eventIds[]`;
+- optional `discoveryId`;
+- dati M2 già esistenti.
+
+Il Diario risolve il testo della discovery dai contenuti.
+
+### Rendering/UI
+
+Pixi:
+
+- renderizza Nibi solo se residente;
+- usa placeholder chiaramente distinguibile da Momo;
+- interpola il suo movimento ma non decide comportamento/relazione.
+
+React:
+
+- mostra categoria qualitativa "Legame Momo–Nibi" solo quando Nibi è residente;
+- non mostra il numero;
+- nessun comando diretto sulle creature.
+
 ## SaveSystem
 
 Definire un'interfaccia `SaveAdapter`.
