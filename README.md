@@ -1,13 +1,12 @@
 # Creature Sanctuary
 
-Prototipo M1: React ospita la Radura PixiJS, il core TypeScript gestisce le tre
-attività autonome di Momo e lo storage salva lo stato locale.
-La grafica usa esclusivamente forme e testo placeholder.
+Prototipo M2: Momo mantiene le tre attività autonome M1; il primo return loop
+aggiunge Bacche, una ciotola fissa e l'ultimo report del Diario. La grafica usa
+solo forme e testo placeholder.
 
 ## Avvio
 
-Usare **Node.js 24 LTS** e npm (`.nvmrc` indica il major previsto).
-Dalla root del repository:
+Usare **Node.js 24 LTS** e npm (`.nvmrc` indica il major previsto), dalla root:
 
 ```sh
 npm install
@@ -17,65 +16,101 @@ npm run build
 npm run preview
 ```
 
-`dev` serve l'app su http://localhost:5173; `preview` serve la build di `dist/`.
-`test` esegue Vitest in Node, senza inizializzare React, Pixi o DOM.
-`build` controlla anche i tipi TypeScript. Il lockfile fissa le versioni installate;
-per installazioni riproducibili successive è disponibile `npm ci`.
+`dev` serve l'app su http://localhost:5173; `preview` serve `dist/` su
+http://localhost:4173. `build` controlla anche i tipi TypeScript. Il lockfile fissa
+le dipendenze; per installazioni riproducibili successive usare `npm ci`.
+I test girano in Node. I test core/storage non inizializzano React, Pixi o DOM;
+un test di integrazione separato verifica che render React ripetuti non
+rieseguano il bootstrap offline.
 
-## Verifica manuale M1
+## Verifica manuale M2
 
-1. Con storage vuoto aprire l'app: Momo sonnecchia all'Albero; Ruscello ed Erba
-   Alta sono distinti. Non ci sono comandi per spostarlo.
-2. Osservare per 1–2 minuti senza input: almeno due attività devono essere
-   leggibili tramite testo, posizione e simbolo/posa. Le soste variano, i
-   movimenti durano tre secondi. Verificare ritorni all'Albero e visite curiose.
-3. Ricaricare durante una sosta: attività e deadline restano quelle salvate,
-   finché la fase non è scaduta.
-4. Ricaricare durante uno spostamento: Momo riprende il percorso persistito e
-   arriva all'attività scelta. Dopo una lunga assenza viene risolta soltanto
-   quella fase, e la fase successiva parte dal presente.
-5. Nei DevTools → Application → Local Storage, eliminare la chiave
-   `creature-sanctuary.save`, poi ricaricare: viene creato lo stato iniziale.
-6. Sostituire il valore con `{broken` e ricaricare: l'app riparte dall'Albero
-   senza crash e scrive un salvataggio valido nello schema 2.
+### Nuova partita
 
-Proseguire l'osservazione per **3–5 minuti** e valutare umanamente: Momo prende
-iniziative proprie? Sembra una creatura o una demo di timer? È troppo irrequieto
-o statico? La preferenza per l'Albero si percepisce? I pesi 5/3/2 e i movimenti
-di tre secondi funzionano? Le tre attività diventano già ripetitive?
-I test e la verifica browser dell'implementazione non chiudono queste domande.
-**M1 è implementata; la validazione di design resta al playtest umano. M2 non è iniziata.**
+1. Nei DevTools → Application → Local Storage eliminare solo la chiave
+   `creature-sanctuary.save`, poi aprire/ricaricare l'app.
+2. Verificare **1 Bacca**, ciotola vuota e nessun report. Momo parte sonnecchiando
+   sotto l'Albero e continua a scegliere autonomamente fra le tre attività.
+3. Premere **Lascia 1 Bacca**: il conteggio scende a 0, la Bacca appare nella
+   ciotola e l'azione viene disabilitata. Non ci sono comandi di movimento.
+4. Un reload immediato conserva la ciotola piena: sotto cinque minuti nessuna
+   raccolta, consumo o nuovo evento/report offline.
 
-Se localStorage è bloccato o pieno, la sessione continua e la UI segnala che il
-salvataggio non è disponibile. Versioni/schema non supportati o dati malformati
-ricadono sullo stato iniziale. Lo schema è passato da 1 a **2**: i save M0.5
-(anche validi) vengono intenzionalmente resettati a `doze_tree` all'Albero.
-Nessun framework di migrazione è stato aggiunto.
+### Primo ritorno reale
+
+1. Chiudere la scheda per **almeno cinque minuti**, quindi riaprire l'app sullo
+   stesso indirizzo/origine e nello stesso browser.
+2. Verificare ciotola vuota e report **Mentre eri via** aperto automaticamente.
+   Se l'assenza è inferiore a trenta minuti compare un solo evento; con la
+   ciotola piena deve essere uno degli eventi ciotola.
+3. Chiudere il report: al reload immediato non deve riaprirsi, né duplicare Bacche
+   o eventi. Usare **Diario** per riaprire lo stesso ultimo report.
+4. Per un ritorno più lungo, verificare che il report rimanga compatto, con al
+   massimo due righe di eventi. I test coprono le soglie esatte di raccolta.
+5. Provare un save corrotto (`{broken`) o di versione sconosciuta: l'app deve
+   ripartire in sicurezza. Uno schema 2 valido deve conservare Momo e aggiungere
+   i campi M2; uno schema 1 riparte dal nuovo stato iniziale.
+
+### Playtest umano dopo il merge
+
+M2 è una implementazione da valutare, **non è automaticamente design-validata**.
+Dopo almeno un ritorno reale chiedersi: è successo qualcosa o sembra solo un
+popup di ricompensa? La ciotola comunica causa/conseguenza? La riga su Momo gli
+aggiunge personalità? Le Bacche sono utili o già troppo astratte? Il report è
+invadente? Viene voglia di chiudere e tornare ancora? La ripetizione/macchina
+sottostante è troppo evidente?
+
+**M3 non è iniziata e resta subordinata a questa verifica umana.**
+
+## Regole M2 e persistenza
+
+- Nuova partita: 1 Bacca, ciotola vuota, ultimo report null.
+- Lasciare una Bacca costa 1 e richiede ciotola vuota e inventario positivo.
+- Da 5 minuti di assenza: report con 1 evento; da 30 minuti: 2 eventi al massimo.
+- Raccolta comune: `min(8, floor(elapsed / 15 minuti))`. Da 5 a 14m59s è zero.
+- Una ciotola piena richiede un evento ciotola nel primo slot e viene svuotata.
+- Gli eventi possono aggiungere +1 Bacca oltre alla raccolta comune. Il report
+  mostra il totale guadagnato, con testo risolto dai contenuti tramite event ID.
+- Si evitano eventi dell'ultimo report quando esistono alternative eleggibili e
+  non si ripete lo stesso evento due volte nello stesso ritorno.
+- Si conserva solo l'ultimo report e il suo acknowledgement, senza timeline.
+
+Lo **schema 3** migra in modo mirato i save M1 (schema 2) validi: preserva Momo,
+aggiunge 1 Bacca, ciotola vuota e report null. La normale reconciliation può poi
+usare il timestamp originale per un ritorno valido. Non c'è un framework di
+migrazione. Save sconosciuti, corrotti o incoerenti usano un nuovo stato sicuro.
+
+`main.tsx` esegue `startGame` **prima** di montare React/StrictMode: lettura e
+migrazione, risoluzione di al massimo una fase Momo scaduta, reconciliation M2
+una sola volta, salvataggio immediato con baseline corrente, poi rendering.
+Nessun initializer o effect React assegna reward o sceglie eventi offline.
+Il reload immediato usa la nuova baseline, senza duplicare il ritorno.
+StrictMode rimane attivo.
+
+Si salva a ogni transizione Momo, azione sulla ciotola e chiusura del Diario;
+`pagehide` aggiorna il checkpoint alla chiusura della scheda. Il controllo
+riapertura Diario è solo UI e non assegna premi. Se localStorage è bloccato o
+pieno, la sessione continua con un avviso: la baseline e i progressi non possono
+essere garantiti tra reload finché la persistenza non torna disponibile.
+
+Orologio arretrato: elapsed offline portato a zero, nessun premio/report;
+la fase Momo viene ribasata con timestamp non negativi. M1 risolve al massimo
+una fase e riparte dal presente, senza simulare le attività perse.
+La reconciliation M2 è limitata a due event slot, indipendentemente dall'assenza.
 
 ## Moduli e confini
 
-- `src/core/state/`: `GameState`, scelta pesata, durate e transizioni, validazione dello stato.
-- `src/core/time/`: interfaccia `Clock`; `Date.now()` viene iniettato dal bootstrap.
-- `src/core/random/`: `RandomSource`; `Math.random()` viene iniettato dal bootstrap.
-- `src/content/radura.json`: tre anchor e durata provvisoria dello spostamento.
-- `src/content/momo.json`: attività authored, pesi, intervalli, testi e simboli;
-  tratti di identità conservati, senza trait engine o effetti di `goloso`.
-- `src/app/`: composizione, timer del browser e coordinamento del salvataggio.
-- `src/ui/`: lifecycle della canvas; l'interfaccia React permette di osservare.
-- `src/scene/sanctuary/`: rendering Pixi e interpolazione, senza regole gameplay.
-- `src/storage/`: `SaveAdapter`, localStorage ed envelope `{ schemaVersion, savedAt, state }`.
+- `src/core/state/`: stato serializzabile, attività autonome M1 e regole ciotola/acknowledgement.
+- `src/core/time/`, `src/core/random/`: dipendenze Clock/RandomSource; implementazioni reali nel bootstrap.
+- `src/core/offline/`: report, selezione stretta M2 ed effetti; nessun EventEngine generico.
+- `src/content/radura.json`, `momo.json`: anchor e profilo M1 invariato.
+- `src/content/offline.json`: configurazione M2 e dieci eventi authored.
+- `src/app/startGame.ts`: orchestration una volta fuori React; `useGame` coordina la sessione attiva.
+- `src/ui/diary/`: pannello compatto, senza diagnostica o storico.
+- `src/scene/sanctuary/`: rendering Pixi, movimento interpolato e ciotola fissa.
+- `src/storage/`: SaveAdapter, localStorage, parsing/migrazione mirata, serializzazione versionata.
 
-Lo stato salva anchor e attività corrente, fase `settled`/`moving`, inizio e
-deadline della fase. Nel movimento salva l'attività di destinazione e la sua
-durata già scelta. L'attività corrente basta a escludere la ripetizione immediata.
-Si salva all'avvio e a ogni transizione; un timer di polling verifica la scadenza
-senza salvare ogni frame. Ogni aggiornamento risolve al massimo una fase e
-riparte dal tempo corrente, anche dopo una scheda sospesa. Al reload un orologio
-arretrato ribasa la fase conservandone la durata; l'inizio resta non negativo.
-Durante la sessione, un salto precedente all'inizio ribasa la fase sul presente.
-Non ci sono loop di recupero o simulazione dell'assenza.
-
-Tre anchor, pesi 5/3/2, durate 8–14/5–9/4–7 secondi, movimento di tre secondi e
-layout 800×400 sono parametri del prototipo, non bilanciamento o arte definitiva.
-Economia, reward offline, eventi, Diario, Bestiario, altre creature e asset finali
-restano alle milestone successive. Le domande di design rimangono aperte.
+M1 conserva pesi 5/3/2, durate 8–14/5–9/4–7 secondi e movimenti di tre secondi.
+Pacing, layout 800×400 e grafica restano provvisori. Nibi, relazioni, Legnetti,
+Fibre, bisogni, upgrade, ulteriori strutture, storico Diario, EventEngine,
+Bestiario, meteo, backend, arte finale e audio restano fuori scope.
