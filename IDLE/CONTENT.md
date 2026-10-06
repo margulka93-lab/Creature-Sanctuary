@@ -72,6 +72,19 @@ Il tratto `goloso` non modifica ancora il comportamento: sarà collegato a cibo/
 
 Funzione di design: creare affezione e insegnare che la creatura è un individuo, non un'unità produttiva.
 
+#### Hook di crescita futuri — OPEN
+
+Momo sarà il primo soggetto del vertical slice di creature raising. Le sue caratteristiche già emerse possono diventare input/risultati di sviluppo:
+
+- preferenza per l'Albero;
+- curiosità verso Ruscello/Erba Alta;
+- forte interesse per le Bacche;
+- tendenza a nascondere oggetti;
+- rapporto con Nibi;
+- future esperienze di esplorazione.
+
+Non è ancora deciso quali di questi producano cambiamenti permanenti, comportamenti appresi o varianti/forme. Non implementare autonomamente un'evoluzione di Momo finché M3.5 non la definisce.
+
 ### Nibi — Spriglet
 
 Aspetto concettuale:
@@ -124,7 +137,7 @@ Tratti espressi in M3:
 - `socievole` → eventi condivisi frequenti una volta residente;
 - `disordinato` → tono di alcuni shared event.
 
-Funzione: introdurre relazioni e interazioni senza trasformare le creature in unità controllabili.
+Funzione: introdurre relazioni e interazioni senza trasformare le creature in unità controllabili. La relazione con Nibi sarà anche uno dei primi input reali da poter usare successivamente nel creature raising, ma M3 non deve ancora inventarne gli effetti di sviluppo.
 
 ### Piko — Pebblin
 
