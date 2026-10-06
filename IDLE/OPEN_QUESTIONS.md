@@ -71,9 +71,15 @@ Per ora breeding e genetica complessa sono fuori scope.
 
 ## Relazioni
 
-- Il giocatore vede categorie qualitative?
-- Le relazioni possono decadere?
-- Servono relazioni direzionali A→B e B→A o basta un singolo valore condiviso?
+M3 usa provvisoriamente un valore condiviso 0–5 e categorie qualitative visibili, senza decadimento.
+
+Restano aperte per la versione più ampia:
+
+- la scala 0–5 è sufficiente o serve maggiore granularità?
+- alcune relazioni future devono essere direzionali A→B / B→A?
+- esisterà decadimento in sistemi più avanzati?
+- quante categorie qualitative servono davvero?
+- il giocatore deve vedere sempre il legame o scoprirlo soprattutto attraverso gli eventi?
 
 ## Bisogni
 
