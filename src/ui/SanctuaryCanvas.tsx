@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { GameState } from '../core/state/GameState';
+import type { Clock } from '../core/time/Clock';
 import { createSanctuary } from '../scene/sanctuary/createSanctuary';
 
-export function SanctuaryCanvas({ state }: { state: GameState }) {
+export function SanctuaryCanvas({ state, clock }: { state: GameState; clock: Clock }) {
   const host = useRef<HTMLDivElement>(null);
   const scene = useRef<Awaited<ReturnType<typeof createSanctuary>> | null>(null);
   const latestState = useRef(state);
@@ -11,7 +12,7 @@ export function SanctuaryCanvas({ state }: { state: GameState }) {
 
   useEffect(() => {
     let cancelled = false;
-    void createSanctuary(host.current!).then((created) => {
+    void createSanctuary(host.current!, clock).then((created) => {
       if (cancelled) { created.destroy(); return; }
       scene.current = created;
       created.render(latestState.current);
@@ -21,7 +22,7 @@ export function SanctuaryCanvas({ state }: { state: GameState }) {
       scene.current?.destroy();
       scene.current = null;
     };
-  }, []);
+  }, [clock]);
 
   useEffect(() => { scene.current?.render(state); }, [state]);
   return <div className="scene" ref={host}>{failed && <p role="alert">Impossibile avviare la scena Pixi. Ricarica con un browser compatibile con WebGL.</p>}</div>;

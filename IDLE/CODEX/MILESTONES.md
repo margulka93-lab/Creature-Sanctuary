@@ -74,7 +74,11 @@ Success criteria:
 
 ## M1 — Momo in una Radura
 
-**Stato:** design definito, pronta per implementazione.
+**Stato di implementazione:** implementata (issue #5). Core autonomo, RNG/clock
+iniettati, tre attività authored, movimento placeholder interpolato e save
+schema 2; i save pre-M1 vengono esplicitamente resettati all'attività iniziale.
+La validazione di design resta aperta al playtest umano descritto nel README.
+M2 non è iniziata.
 
 **Domanda da validare:** possiamo far percepire Momo come una creatura autonoma, timida ma curiosa, con pochissima tecnologia?
 
