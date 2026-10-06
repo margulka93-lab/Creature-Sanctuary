@@ -72,13 +72,13 @@ Success criteria:
 - i test del core non richiedono Pixi o React;
 - l'architettura resta leggibile e piccola.
 
-## M1 — Momo in una Radura
+## M1 — Momo in una Radura ✅
 
-**Stato di implementazione:** implementata (issue #5). Core autonomo, RNG/clock
-iniettati, tre attività authored, movimento placeholder interpolato e save
-schema 2; i save pre-M1 vengono esplicitamente resettati all'attività iniziale.
-La validazione di design resta aperta al playtest umano descritto nel README.
-M2 non è iniziata.
+**Stato:** implementata e playtestata.
+
+Il playtest umano con grafica placeholder ha giudicato il comportamento autonomo
+sufficientemente credibile/carinamente leggibile da permettere di procedere.
+Pacing, grafica e varietà restano provvisori; M1 non è considerata contenuto finale.
 
 **Domanda da validare:** possiamo far percepire Momo come una creatura autonoma, timida ma curiosa, con pochissima tecnologia?
 
@@ -142,22 +142,65 @@ Non dichiarare M1 validata finché il risultato non viene osservato nel browser.
 
 ## M2 — Primo idle loop
 
-**Domanda da validare:** tornare dopo un'assenza produce interesse?
+**Stato:** design definito, pronta per implementazione.
+
+**Domanda da validare:** tornare dopo un'assenza produce curiosità e la sensazione che il santuario abbia vissuto senza il giocatore?
 
 Scope:
 
-- lastSeen timestamp;
-- offline reconciliation;
-- 3 risorse max;
-- circa 10 eventi;
-- Diario di ritorno;
-- una struttura semplice, probabilmente Rifugio o Ciotola.
+- offline reconciliation al caricamento;
+- una sola risorsa attiva: Bacche;
+- stato iniziale: 1 Bacca;
+- raccolta comune: 1 Bacca / 15 min, cap 8;
+- soglia report: 5 min;
+- massimo 1 evento significativo tra 5 e 30 min;
+- massimo 2 eventi da 30 min in su;
+- 10 eventi offline authored;
+- repetition control rispetto all'ultimo report;
+- ciotola vuota/piena;
+- azione "lascia 1 Bacca";
+- consumo offline della Bacca nella ciotola con evento garantito;
+- ultimo report di ritorno persistito;
+- apertura automatica una volta + riapertura tramite Diario;
+- migrazione mirata save M1 → M2;
+- test deterministici con Clock/RandomSource.
 
-Success criteria:
+Niente:
 
-- chiudere e riaprire dopo un intervallo produce un risultato coerente;
-- il Diary non è un log tecnico;
-- nessuna simulazione secondo-per-secondo necessaria.
+- Legnetti/Fibre attivi;
+- Nibi;
+- relazioni;
+- struttura potenziabile;
+- più tipi di cibo;
+- bisogno fame;
+- simulazione attività-per-attività offline;
+- EventEngine generico;
+- timeline completa del Diario;
+- Bestiario;
+- meteo/mistero;
+- asset finali.
+
+Success criteria tecnici:
+
+- un'assenza sotto 5 min non genera reward/report;
+- un'assenza valida genera una sola reconciliation e non duplica reward al reload;
+- la raccolta comune rispetta formula e cap;
+- il numero massimo di eventi rispetta la fascia temporale;
+- una ciotola piena viene consumata soltanto dopo una vera assenza valida;
+- gli eventi recenti vengono evitati quando esistono alternative;
+- bonus Bacche degli eventi vengono applicati una sola volta;
+- report e acknowledgement sopravvivono al reload;
+- nessuna simulazione secondo-per-secondo.
+
+Success criteria di design da playtest umano:
+
+- il report sembra raccontare un piccolo pezzo di vita del santuario, non un log tecnico;
+- lasciare una Bacca nella ciotola crea una causa/conseguenza percepibile al ritorno;
+- 1–2 eventi sono abbastanza da incuriosire senza diventare rumore;
+- le Bacche rendono possibile una scelta senza trasformare Momo in una fabbrica;
+- dopo aver chiuso il report nasce almeno un minimo di desiderio di lasciare di nuovo il santuario e vedere cosa succede.
+
+Non iniziare M3 finché il return loop non è stato osservato in browser.
 
 ## M3 — Nibi e relazioni
 
