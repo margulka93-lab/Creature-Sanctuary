@@ -294,6 +294,59 @@ Success criteria di design da playtest umano:
 
 Non iniziare M4 finché Nibi e il legame non sono stati osservati nel browser e in almeno un return report condiviso.
 
+## M3.5 — Creature Raising vertical slice
+
+**Stato:** design da definire dopo il playtest M3. NON implementation-ready.
+
+**Domanda da validare:** il giocatore prova piacere nel creare condizioni e scoprire come queste cambiano concretamente una creatura nel tempo?
+
+Obiettivo:
+
+- trasformare la fantasy di "allevare" in una prima meccanica reale;
+- usare Momo come soggetto pilota;
+- collegare almeno una scelta del giocatore a un cambiamento persistente e percepibile;
+- dimostrare che habitat/cibo/relazioni/esperienze possono essere input dello sviluppo senza micromanagement.
+
+Il design dovrà scegliere il minimo sottoinsieme fra:
+
+- offerta/cibo;
+- habitat;
+- relazione con Nibi;
+- interazione diretta;
+- esplorazione;
+- eventi vissuti.
+
+E scegliere **un solo tipo principale di outcome** da validare per primo, per esempio:
+
+- comportamento appreso;
+- nuova preferenza;
+- tratto manifestato;
+- cambiamento/variante visiva;
+- altra conseguenza persistente equivalente.
+
+Questi esempi sono OPEN, non requisiti implementativi.
+
+Niente in M3.5 finché non deciso:
+
+- breeding;
+- genetica complessa;
+- eredità dei tratti;
+- alberi evolutivi generici;
+- molte forme/varianti;
+- terza creatura;
+- economia espansa;
+- sistemi di bisogno punitivi.
+
+Success criteria da definire nel design, ma il minimo è:
+
+- il giocatore compie una scelta comprensibile;
+- la creatura reagisce senza essere comandata direttamente;
+- la conseguenza modifica qualcosa di persistente e osservabile;
+- il giocatore riesce a collegare scelta e risultato senza vedere formule;
+- nasce curiosità verso altre possibili traiettorie di crescita.
+
+**M4 resta bloccata finché questo vertical slice non è stato progettato e playtestato.**
+
 ## M4 — Content architecture
 
 **Obiettivo:** assicurare che il gioco sia espandibile senza hardcode crescente.
@@ -310,6 +363,8 @@ Success criteria:
 
 - aggiungere un evento semplice non richiede modifica al core;
 - aggiungere una creatura simile a quelle esistenti richiede soprattutto contenuti.
+
+M4 deve generalizzare sistemi già dimostrati, incluso il primo vero raising loop, non inventare astrattamente un modello di crescita futuro.
 
 ## M5 — Piko + Bestiario
 
