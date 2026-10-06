@@ -85,3 +85,59 @@ Creature, eventi, oggetti e strutture dovrebbero poter essere estesi principalme
 Questi documenti NON sono un GDD definitivo.
 
 Le decisioni possono essere cambiate deliberatamente durante la progettazione.
+
+## D-015 — Target iniziale: browser, desktop-first responsive
+
+Il primo target eseguibile è una web app nel browser.
+
+La UI viene progettata desktop-first ma senza impedire un adattamento responsive successivo.
+
+Packaging desktop nativo e mobile restano decisioni future e non devono condizionare l'MVP.
+
+## D-016 — Stack M0
+
+Lo stack iniziale è:
+
+- TypeScript;
+- React 19.x per shell e UI;
+- Vite 8.x per sviluppo/build;
+- PixiJS 8.x per rendering della scena 2D;
+- Vitest 5.x per test;
+- npm come package manager;
+- Node.js LTS come runtime di sviluppo.
+
+Non introdurre un game engine più ampio senza una ragione emersa dal prototipo.
+
+## D-017 — Separazione netta tra core, scena e UI
+
+Il core di gameplay deve essere TypeScript puro e testabile senza browser/rendering.
+
+Responsabilità:
+
+- **core:** stato, tempo, RNG, eventi, offline reconciliation, regole;
+- **scene:** PixiJS, background, creature, anchor point, hotspot ed effetti visivi;
+- **ui:** React, Diario, Bestiario, menu, pannelli e controlli.
+
+Il core non deve importare React, PixiJS o API DOM.
+
+## D-018 — Persistenza locale tramite adapter
+
+Per il prototipo il salvataggio usa localStorage, ma soltanto dietro un'interfaccia `SaveAdapter`.
+
+Il formato di save deve essere versionato fin dall'inizio.
+
+Cloud save, account e backend sono fuori scope.
+
+## D-019 — Contenuti in JSON
+
+Creature, eventi, risorse e strutture iniziano come file JSON separati dal core.
+
+TypeScript definisce i tipi e il codice che li consuma.
+
+La validazione strutturale più robusta dei contenuti viene introdotta quando richiesta dalla milestone di content architecture.
+
+## D-020 — Rendering React + Pixi senza accoppiamento del dominio
+
+React ospita la canvas Pixi e l'interfaccia applicativa, ma la scena Pixi non deve diventare il contenitore delle regole di gioco.
+
+Per il primo prototipo non è necessario introdurre wrapper o state library aggiuntive se l'integrazione diretta è sufficiente.

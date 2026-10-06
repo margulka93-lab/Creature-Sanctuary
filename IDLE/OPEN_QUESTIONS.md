@@ -2,19 +2,16 @@
 
 Queste domande sono intenzionalmente irrisolte. Codex non deve scegliere autonomamente una risposta permanente.
 
-## Piattaforma
+Le scelte di piattaforma MVP, stack, rendering, formato contenuti, persistenza locale e test runner sono state chiuse in M0 e si trovano in `DECISIONS.md` e `CODEX/TECH_SPEC.md`.
 
-- Browser/web app?
-- Desktop?
-- Mobile in una fase successiva?
-- Responsive web come primo target?
+## Distribuzione futura
 
-## Stack tecnico
+- Serve un packaging desktop nativo?
+- Mobile diventerà un target ufficiale oppure resterà web responsive?
+- Serve una PWA installabile?
+- Quali store/piattaforme sono eventualmente rilevanti?
 
-- Quale framework/runtime usare?
-- Serve un game engine 2D oppure basta uno stack web?
-- Canvas/WebGL o DOM/CSS per la scena?
-- Libreria di animazione sì/no?
+Queste domande non devono condizionare M0.5–M2.
 
 ## Direzione artistica
 
@@ -81,7 +78,7 @@ Per ora breeding e genetica complessa sono fuori scope.
 
 ## Eventi
 
-- Formato dati degli eventi?
+- Qual è lo schema dati definitivo degli eventi?
 - Come evitare ripetizioni troppo evidenti?
 - Quante varianti testuali servono?
 - Esistono cooldown per evento?
@@ -115,12 +112,16 @@ Per ora breeding e genetica complessa sono fuori scope.
 
 Non definire queste risposte finché non viene sviluppato il worldbuilding.
 
-## Salvataggio
+## Salvataggio futuro
 
-- Solo locale?
-- Account/cloud save?
-- Import/export manuale?
-- Come gestire manipolazioni dell'orologio di sistema?
+Per l'MVP è deciso localStorage tramite `SaveAdapter`.
+
+Restano aperti:
+
+- cloud save in futuro?
+- import/export manuale?
+- eventuale sincronizzazione tra dispositivi?
+- strategia definitiva contro manipolazioni dell'orologio di sistema?
 
 ## Monetizzazione/pubblicazione
 
@@ -142,4 +143,4 @@ Questa decisione non deve influenzare prematuramente il prototipo.
 - supporto touch;
 - localizzazione.
 
-Da includere quando viene definito il target di piattaforma.
+Da includere quando viene definita la UI reale.

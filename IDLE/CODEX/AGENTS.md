@@ -21,6 +21,42 @@ Non trasformare un'idea aperta in una decisione definitiva senza istruzione espl
 
 Se una scelta è in `OPEN_QUESTIONS.md`, trattarla come non decisa.
 
+## Stack M0 approvato
+
+Per M0.5 e milestone successive usare, salvo revisione esplicita:
+
+- TypeScript;
+- React 19.x;
+- Vite 8.x;
+- PixiJS 8.x;
+- Vitest 5.x;
+- npm;
+- contenuti JSON;
+- localStorage tramite `SaveAdapter`.
+
+Non sostituire autonomamente questo stack con Phaser, Unity, Godot o altro engine/framework.
+
+## Confini obbligatori
+
+Il core di dominio deve restare TypeScript puro.
+
+Il core NON deve importare:
+
+- React;
+- PixiJS;
+- API DOM;
+- localStorage direttamente.
+
+Responsabilità:
+
+- core = stato/regole/eventi/offline/tempo/RNG;
+- scene = rendering Pixi;
+- ui = React;
+- storage = adapter di persistenza;
+- content = dati JSON.
+
+Preferire dipendenze iniettate per tempo, RNG e storage.
+
 ## Priorità
 
 1. mantenere scope realistico;
@@ -46,6 +82,9 @@ Se una scelta è in `OPEN_QUESTIONS.md`, trattarla come non decisa.
 - valute aggiuntive;
 - prestige;
 - login/account system;
+- Redux/Zustand o altre state library senza necessità dimostrata;
+- ECS;
+- service worker/PWA prima che venga deciso;
 - dipendenze pesanti senza motivo.
 
 ## Content first
@@ -76,7 +115,7 @@ Il modello atteso è "reconcile on resume":
 
 - salva timestamp;
 - al caricamento calcola elapsed time;
-- genera/aggregra risultati;
+- genera/aggrega risultati;
 - aggiorna lo stato;
 - mostra il Diary summary.
 
@@ -85,6 +124,8 @@ Il modello atteso è "reconcile on resume":
 Ogni milestone deve produrre qualcosa di eseguibile e verificabile.
 
 Evitare mega-refactor prematuri e architetture pensate per centinaia di feature che ancora non esistono.
+
+Implementare soltanto lo scope della milestone richiesta. Se una soluzione più generale è chiaramente necessaria, mantenerla comunque minima.
 
 ## Testing
 
@@ -96,6 +137,8 @@ Dare priorità a test per:
 - prerequisiti;
 - effetti sulle risorse;
 - migrazione versioni save quando introdotta.
+
+I test del core devono poter girare senza inizializzare React o Pixi.
 
 ## Documentazione
 
