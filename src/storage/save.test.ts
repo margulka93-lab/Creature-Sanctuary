@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { advanceTime, createInitialState } from '../core/state/GameState';
 import { LocalStorageSaveAdapter, SAVE_KEY } from './LocalStorageSaveAdapter';
 import type { SaveAdapter } from './SaveAdapter';
-import { loadGame, saveGame, serializeSave } from './save';
+import { loadGame, readSave, saveGame, serializeSave } from './save';
 
 function memoryAdapter(raw: string | null = null): SaveAdapter {
   return { read: () => raw, write: (save) => { raw = save; } };
@@ -12,11 +12,11 @@ const random = { next: () => 0 };
 const noRandom = { next: (): number => { throw new Error('Unexpected RNG consumption'); } };
 const initial = createInitialState(clock, random);
 const moving = advanceTime(initial, { now: () => initial.momo.deadline }, random);
-const envelope = (state: unknown, schemaVersion = 2) => JSON.stringify({ schemaVersion, savedAt: 1000, state });
+const envelope = (state: unknown, schemaVersion = 3) => JSON.stringify({ schemaVersion, savedAt: 1000, state });
 
-describe('M1 versioned save', () => {
-  it('serializes schema 2, timestamp and state', () => {
-    expect(JSON.parse(serializeSave(initial, clock))).toEqual({ schemaVersion: 2, savedAt: 1000, state: initial });
+describe('M2 versioned save with M1 resume regression', () => {
+  it('serializes schema 3, timestamp and state', () => {
+    expect(JSON.parse(serializeSave(initial, clock))).toEqual({ schemaVersion: 3, savedAt: 1000, state: initial });
   });
 
   it('round-trips an in-progress settled phase without drawing new randomness', () => {
@@ -70,9 +70,9 @@ describe('M1 versioned save', () => {
     envelope({ momo: { ...moving.momo, activityDurationMs: 1 } }),
     envelope({ momo: { ...moving.momo, targetActivityId: 'doze_tree' } }),
     envelope({ momo: { ...moving.momo, deadline: null } }),
-    JSON.stringify({ schemaVersion: 2, savedAt: -1, state: initial }),
-    JSON.stringify({ schemaVersion: 2, savedAt: 1000.5, state: initial }),
-    JSON.stringify({ schemaVersion: 2, savedAt: 0, state: initial }),
+    JSON.stringify({ schemaVersion: 3, savedAt: -1, state: initial }),
+    JSON.stringify({ schemaVersion: 3, savedAt: 1000.5, state: initial }),
+    JSON.stringify({ schemaVersion: 3, savedAt: 0, state: initial }),
   ])('falls back safely for missing/invalid save: %s', (raw) => {
     expect(loadGame(memoryAdapter(raw), clock, random)).toEqual(initial);
   });
@@ -93,5 +93,30 @@ describe('M1 versioned save', () => {
     saveGame(adapter, initial, clock);
     expect(values.has(SAVE_KEY)).toBe(true);
     expect(loadGame(adapter, clock, noRandom)).toEqual(initial);
+  });
+
+  it('migrates a valid schema 2 save preserving Momo and initializes only M2 fields', () => {
+    const legacy = JSON.stringify({ schemaVersion: 2, savedAt: 9500, state: { momo: moving.momo } });
+    const migrated = readSave(memoryAdapter(legacy), { now: () => 10000 }, noRandom);
+    expect(migrated).toEqual({ schemaVersion: 3, savedAt: 9500, state: {
+      momo: moving.momo, resources: { berries: 1 }, bowl: 'empty', latestReport: null,
+    } });
+  });
+
+  it('round-trips schema 3 resources, filled bowl and acknowledged latest report', () => {
+    const state = { ...initial, resources: { berries: 7 }, bowl: 'berry' as const, latestReport: {
+      generatedAt: 1000, elapsedMs: 900000, berriesGained: 2, eventIds: ['berry_under_root'], acknowledged: true,
+    } };
+    expect(loadGame(memoryAdapter(serializeSave(state, clock)), clock, noRandom)).toEqual(state);
+  });
+
+  it.each([
+    { ...initial, resources: { berries: -1 } },
+    { ...initial, resources: { berries: 1.5 } },
+    { ...initial, bowl: 'invalid' },
+    { ...initial, latestReport: { generatedAt: 1000, elapsedMs: 300000, berriesGained: 0, eventIds: ['unknown'], acknowledged: false } },
+    { ...initial, latestReport: { generatedAt: 1000, elapsedMs: 300000, berriesGained: 0, eventIds: ['root_nap', 'root_nap'], acknowledged: false } },
+  ])('rejects invalid M2 fields', (state) => {
+    expect(loadGame(memoryAdapter(envelope(state)), clock, random)).toEqual(initial);
   });
 });

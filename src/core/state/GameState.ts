@@ -2,6 +2,7 @@ import radura from '../../content/radura.json';
 import momo from '../../content/momo.json';
 import type { Clock } from '../time/Clock';
 import type { RandomSource } from '../random/RandomSource';
+import { isReturnReport, type ReturnReport } from '../offline/ReturnReport';
 
 export type AnchorId = 'tree' | 'stream' | 'tall_grass';
 export type ActivityId = 'doze_tree' | 'watch_stream' | 'explore_grass';
@@ -23,12 +24,22 @@ interface PhaseState {
   phaseStartedAt: number;
   deadline: number;
 }
-export interface GameState {
+export interface MomoState {
   momo: (PhaseState & { phase: 'settled' }) | (PhaseState & {
     phase: 'moving';
     targetActivityId: ActivityId;
     activityDurationMs: number;
   });
+}
+
+export interface GameState extends MomoState {
+  resources: { berries: number };
+  bowl: 'empty' | 'berry';
+  latestReport: ReturnReport | null;
+}
+
+export function addM2State(state: MomoState): GameState {
+  return { ...state, resources: { berries: 1 }, bowl: 'empty', latestReport: null };
 }
 
 export function selectActivity(previous: ActivityId, random: RandomSource): ActivityDefinition {
@@ -46,14 +57,14 @@ export function selectDuration(activity: ActivityDefinition, random: RandomSourc
   return activity.minDurationMs + Math.floor(random.next() * (activity.maxDurationMs - activity.minDurationMs + 1));
 }
 
-function settled(activity: ActivityDefinition, duration: number, now: number): GameState {
+function settled(activity: ActivityDefinition, duration: number, now: number): MomoState {
   return { momo: { phase: 'settled', currentAnchor: activity.anchor, currentActivityId: activity.id,
     phaseStartedAt: now, deadline: now + duration } };
 }
 
 export function createInitialState(clock: Clock, random: RandomSource): GameState {
   const activity = activityById('doze_tree');
-  return settled(activity, selectDuration(activity, random), clock.now());
+  return addM2State(settled(activity, selectDuration(activity, random), clock.now()));
 }
 
 /** Resolve at most one phase and start the next from now, including after a long pause. */
@@ -61,23 +72,23 @@ export function advanceTime(state: GameState, clock: Clock, random: RandomSource
   const now = clock.now();
   const current = state.momo;
   if (now < current.phaseStartedAt) {
-    return { momo: { ...current, phaseStartedAt: now, deadline: now + (current.deadline - current.phaseStartedAt) } };
+    return { ...state, momo: { ...current, phaseStartedAt: now, deadline: now + (current.deadline - current.phaseStartedAt) } };
   }
   if (now < current.deadline) return state;
   if (current.phase === 'moving') {
-    return settled(activityById(current.targetActivityId), current.activityDurationMs, now);
+    return { ...state, ...settled(activityById(current.targetActivityId), current.activityDurationMs, now) };
   }
   const next = selectActivity(current.currentActivityId, random);
   const duration = selectDuration(next, random);
-  if (next.anchor === current.currentAnchor) return settled(next, duration, now);
-  return { momo: { ...current, phase: 'moving', targetActivityId: next.id, activityDurationMs: duration,
+  if (next.anchor === current.currentAnchor) return { ...state, ...settled(next, duration, now) };
+  return { ...state, momo: { ...current, phase: 'moving', targetActivityId: next.id, activityDurationMs: duration,
     phaseStartedAt: now, deadline: now + radura.moveDurationMs } };
 }
 
 const isTimestamp = (value: unknown): value is number => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
 const isActivity = (value: unknown): value is ActivityId => activities.some((entry) => entry.id === value);
 
-export function isGameState(value: unknown): value is GameState {
+export function isMomoState(value: unknown): value is MomoState {
   if (!value || typeof value !== 'object' || !('momo' in value)) return false;
   const current = value.momo;
   if (!current || typeof current !== 'object' || !('currentActivityId' in current) ||
@@ -98,4 +109,12 @@ export function isGameState(value: unknown): value is GameState {
   const target = activityById(current.targetActivityId);
   return target.anchor !== current.currentAnchor && current.activityDurationMs >= target.minDurationMs &&
     current.activityDurationMs <= target.maxDurationMs;
+}
+
+export function isGameState(value: unknown): value is GameState {
+  if (!isMomoState(value) || !('resources' in value) || !value.resources || typeof value.resources !== 'object' ||
+      !('berries' in value.resources) || typeof value.resources.berries !== 'number' ||
+      !Number.isSafeInteger(value.resources.berries) || value.resources.berries < 0 ||
+      !('bowl' in value) || (value.bowl !== 'empty' && value.bowl !== 'berry') || !('latestReport' in value)) return false;
+  return value.latestReport === null || isReturnReport(value.latestReport);
 }

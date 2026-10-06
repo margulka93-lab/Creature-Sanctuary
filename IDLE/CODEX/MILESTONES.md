@@ -142,7 +142,14 @@ Non dichiarare M1 validata finché il risultato non viene osservato nel browser.
 
 ## M2 — Primo idle loop
 
-**Stato:** design definito, pronta per implementazione.
+**Stato di implementazione:** implementata (issue #8), con 74 test Node passati
+e build production riuscita. Verificato in browser un ritorno reale dopo oltre
+5 minuti a scheda chiusa: consumo della ciotola, singolo evento nel Diario,
+acknowledgement persistito e riapertura senza duplicati.
+Schema 3 con migrazione mirata da schema 2 e reconciliation fuori React prima
+del montaggio, seguita dal salvataggio immediato della nuova baseline.
+La validazione di design resta aperta al playtest umano dopo il merge.
+M3 non è iniziata.
 
 **Domanda da validare:** tornare dopo un'assenza produce curiosità e la sensazione che il santuario abbia vissuto senza il giocatore?
 

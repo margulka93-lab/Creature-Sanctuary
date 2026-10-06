@@ -4,3 +4,10 @@ main { max-width: 800px; margin: 32px auto; padding: 0 20px; }
 h1 { margin-bottom: 8px; }
 .scene { width: 100%; aspect-ratio: 2; background: #a6c48a; }
 .scene canvas { display: block; width: 100%; height: auto; }
+.sanctuary-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+button { font: inherit; padding: 8px 12px; background: #fff; color: inherit; border: 1px solid #46633b; border-radius: 5px; cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: default; }
+button:focus-visible { outline: 3px solid #365fb3; outline-offset: 3px; }
+.return-diary { margin: 24px 0; padding: 20px; border: 1px solid #a4b392; border-radius: 8px; background: #fffdf4; }
+.diary-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.diary-heading h2 { margin: 0; }

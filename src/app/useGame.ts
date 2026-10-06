@@ -1,14 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { advanceTime } from '../core/state/GameState';
+import { advanceTime, type GameState } from '../core/state/GameState';
+import { acknowledgeReport, leaveBerry } from '../core/state/actions';
 import type { RandomSource } from '../core/random/RandomSource';
 import type { Clock } from '../core/time/Clock';
 import type { SaveAdapter } from '../storage/SaveAdapter';
-import { loadGame, saveGame } from '../storage/save';
+import { saveGame } from '../storage/save';
 
-export function useGame(adapter: SaveAdapter, clock: Clock, random: RandomSource) {
-  const [state, setState] = useState(() => loadGame(adapter, clock, random));
+export function useGame(initial: { state: GameState; saveAvailable: boolean }, adapter: SaveAdapter, clock: Clock, random: RandomSource) {
+  const [state, setState] = useState(initial.state);
   const currentState = useRef(state);
-  const [saveAvailable, setSaveAvailable] = useState(true);
+  const [saveAvailable, setSaveAvailable] = useState(initial.saveAvailable);
+  const commit = (next: GameState) => {
+    currentState.current = next;
+    setState(next);
+    setSaveAvailable(saveGame(adapter, next, clock));
+  };
 
   useEffect(() => {
     // Consume RNG outside React updater functions, which StrictMode may invoke twice.
@@ -17,14 +23,20 @@ export function useGame(adapter: SaveAdapter, clock: Clock, random: RandomSource
       if (next !== currentState.current) {
         currentState.current = next;
         setState(next);
+        setSaveAvailable(saveGame(adapter, next, clock));
       }
     }, 100);
     return () => window.clearInterval(timer);
-  }, [clock, random]);
+  }, [adapter, clock, random]);
 
   useEffect(() => {
-    setSaveAvailable(saveGame(adapter, state, clock));
-  }, [adapter, state, clock]);
+    const checkpoint = () => { saveGame(adapter, currentState.current, clock); };
+    window.addEventListener('pagehide', checkpoint);
+    return () => window.removeEventListener('pagehide', checkpoint);
+  }, [adapter, clock]);
 
-  return { state, saveAvailable };
+  return { state, saveAvailable,
+    leaveBerry: () => commit(leaveBerry(currentState.current)),
+    acknowledgeReport: () => commit(acknowledgeReport(currentState.current)),
+  };
 }

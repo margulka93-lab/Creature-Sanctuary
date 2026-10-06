@@ -11,7 +11,7 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
     app.destroy(true, { children: true });
     throw error;
   }
-  app.canvas.setAttribute('aria-label', 'La Radura: Momo fra Albero, Ruscello ed Erba Alta');
+  app.canvas.setAttribute('aria-label', 'La Radura: Momo fra Albero, Ruscello ed Erba Alta, con una ciotola');
   app.canvas.setAttribute('role', 'img');
   host.appendChild(app.canvas);
 
@@ -20,6 +20,13 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
     .circle(152, 85, 70).fill('#52764b')
     .roundRect(625, 50, 65, 290, 25).fill('#75b9d0');
   app.stage.addChild(background);
+  const bowl = new Graphics().ellipse(335, 320, 29, 13).fill('#9e8066')
+    .ellipse(335, 315, 29, 10).fill('#d6bd99').stroke({ color: '#6d5944', width: 2 });
+  const berry = new Graphics().circle(335, 311, 8).fill('#a44157');
+  const bowlLabel = new Text({ text: 'Ciotola', style: { fontSize: 18, fill: '#263b27' } });
+  bowlLabel.anchor.set(0.5);
+  bowlLabel.position.set(335, 350);
+  app.stage.addChild(bowl, berry, bowlLabel);
   const grass = new Graphics();
   for (let x = 350; x <= 450; x += 20) {
     grass.moveTo(x, 150).lineTo(x - 9, 75).lineTo(x + 8, 95).lineTo(x + 12, 150).fill('#63854b');
@@ -60,6 +67,7 @@ export async function createSanctuary(host: HTMLDivElement, clock: Clock) {
   return {
     render(state: GameState) {
       displayedState = state;
+      berry.visible = state.bowl === 'berry';
       const sleeping = state.momo.phase === 'settled' && state.momo.currentActivityId === 'doze_tree';
       eyes.clear();
       if (sleeping) eyes.moveTo(-14, -5).lineTo(-6, -5).moveTo(6, -5).lineTo(14, -5).stroke({ color: '#39352e', width: 3 });

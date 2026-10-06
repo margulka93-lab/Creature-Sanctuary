@@ -1,0 +1,15 @@
+{
+  "config": { "thresholdMs": 300000, "berryIntervalMs": 900000, "commonBerryCap": 8, "twoEventThresholdMs": 1800000 },
+  "events": [
+    { "id": "bowl_crumbs", "text": "La ciotola è vuota. Momo ha lasciato tre briciole in fila accanto al bordo.", "weight": 3, "minElapsedMs": 300000, "requiresBowlFilled": true, "effects": { "consumeBowl": true } },
+    { "id": "bowl_shifted", "text": "La bacca è sparita e la ciotola è stata spostata di qualche centimetro verso l'Albero.", "weight": 2, "minElapsedMs": 300000, "requiresBowlFilled": true, "effects": { "consumeBowl": true } },
+    { "id": "bowl_nap", "text": "Momo ha svuotato la ciotola e poi si è addormentato lì vicino.", "weight": 2, "minElapsedMs": 300000, "requiresBowlFilled": true, "effects": { "consumeBowl": true } },
+    { "id": "root_nap", "text": "Momo ha passato buona parte del tempo sotto le radici dell'Albero, raggomitolato così stretto da sembrare una pietra chiara.", "weight": 4, "minElapsedMs": 300000 },
+    { "id": "stream_watch", "text": "Momo è rimasto a lungo al Ruscello, fermo a guardare l'acqua come se aspettasse qualcosa.", "weight": 3, "minElapsedMs": 300000 },
+    { "id": "grass_tunnel", "text": "Nell'Erba Alta è comparso un piccolo corridoio schiacciato. Momo finge di non sapere nulla.", "weight": 3, "minElapsedMs": 300000 },
+    { "id": "false_start", "text": "Momo si è avviato verso il Ruscello, poi a metà strada ha cambiato idea ed è tornato all'Albero.", "weight": 2, "minElapsedMs": 300000 },
+    { "id": "leaf_hat", "text": "Per un po' Momo ha avuto una foglia incastrata sulla testa. Non sembra essersene accorto.", "weight": 2, "minElapsedMs": 300000 },
+    { "id": "berry_under_root", "text": "Sotto una radice c'era una bacca che prima non avevi visto. Momo ci girava intorno con aria molto innocente.", "weight": 2, "minElapsedMs": 900000, "effects": { "berriesDelta": 1 } },
+    { "id": "berry_trail", "text": "Vicino al sentiero hai trovato una piccola fila di bacche. Una è ancora intatta.", "weight": 1, "minElapsedMs": 1800000, "effects": { "berriesDelta": 1 } }
+  ]
+}
