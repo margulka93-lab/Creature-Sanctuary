@@ -141,3 +141,32 @@ La validazione strutturale più robusta dei contenuti viene introdotta quando ri
 React ospita la canvas Pixi e l'interfaccia applicativa, ma la scena Pixi non deve diventare il contenitore delle regole di gioco.
 
 Per il primo prototipo non è necessario introdurre wrapper o state library aggiuntive se l'integrazione diretta è sufficiente.
+
+
+## D-021 — M1 è observation-first
+
+Per M1 Momo agisce autonomamente.
+
+La UI destinata al giocatore non offre comandi diretti per spostarlo fra gli anchor. Eventuali controlli di debug non fanno parte dell'esperienza player-facing.
+
+La milestone deve validare la sensazione "Momo fa cose sue", non la capacità del giocatore di impartire ordini.
+
+## D-022 — Tre attività authored per il prototipo M1
+
+M1 usa un set volutamente piccolo:
+
+- sonnecchia sotto l'Albero;
+- osserva il Ruscello;
+- esplora l'Erba Alta.
+
+Le attività hanno pesi e intervalli di durata authored. Evitare, quando possibile, la ripetizione immediata della stessa attività.
+
+Pesi e durate sono parametri provvisori da playtest, non bilanciamento definitivo.
+
+## D-023 — Niente trait engine generico in M1
+
+I tratti di Momo restano dati di identità, ma M1 non costruisce un sistema generico che converta automaticamente ogni tratto in regole.
+
+Il profilo authored di Momo esprime direttamente "timido" e "curioso".
+
+"Goloso" viene mantenuto ma non produce effetti finché non esiste un sistema cibo/bacche reale.

@@ -163,6 +163,69 @@ Output:
 
 Non deve simulare ogni secondo.
 
+## M1 — comportamento autonomo di Momo
+
+M1 estende il wiring esistente senza introdurre un engine generico per tutte le creature.
+
+### Randomness
+
+Aggiungere una piccola interfaccia iniettabile, ad esempio `RandomSource`, con una sorgente production basata su `Math.random()` creata fuori dal core.
+
+Il core non deve chiamare direttamente `Math.random()`.
+
+I test devono poter fornire una sequenza random deterministica.
+
+### Stato minimo M1
+
+Lo stato persistente di Momo può evolvere per includere:
+
+- `currentAnchor`;
+- `currentActivityId`;
+- fase `settled` oppure `moving`;
+- destinazione quando in movimento;
+- deadline della fase corrente;
+- eventuale activity precedente necessaria al repetition control.
+
+Non aggiungere bisogni, fame, energia, relazione, inventario o altre statistiche non richieste.
+
+### Content M1
+
+Aggiungere l'anchor `tall_grass`.
+
+Il profilo delle tre attività di Momo può stare in JSON/content data con:
+
+- id stabile;
+- anchor;
+- weight;
+- min/max duration;
+- testo/label player-facing se utile.
+
+Questo non implica ancora un ContentRegistry o trait engine generico.
+
+### Transizioni
+
+Il core deve decidere:
+
+- quando una fase è finita;
+- quale attività viene dopo;
+- quando inizia/finisce un movimento.
+
+PixiJS deve soltanto rappresentare lo stato e interpolare visivamente il movimento fra anchor.
+
+### Resume/reload
+
+M1 non implementa la simulazione offline di M2.
+
+Quando si carica un save con una deadline scaduta, risolvere al massimo la fase persistita necessaria a ottenere uno stato coerente e ripartire dal tempo corrente.
+
+Non iterare attraverso minuti/ore di attività perse.
+
+### UX player-facing
+
+Rimuovere i pulsanti M0.5 che comandano direttamente lo spostamento di Momo.
+
+Un testo discreto di stato è ammesso per il prototipo. Evitare popup e feed di log.
+
 ## SaveSystem
 
 Definire un'interfaccia `SaveAdapter`.
