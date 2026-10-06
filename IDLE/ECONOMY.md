@@ -175,3 +175,20 @@ Il playtest deve verificare soltanto:
 - il report sembra una conseguenza del santuario o una ricevuta di produzione?
 
 Non usare M2 per bilanciare un'economia a lungo termine.
+
+
+## Principio di economia rispetto al creature raising
+
+Le risorse non sono il fine della progressione.
+
+Bacche, futuri Legnetti/Fibre, oggetti ed eventuali materiali devono avere un lavoro concreto rispetto a uno o più di questi scopi:
+
+- cura/offerta alle creature;
+- modifica delle condizioni dell'habitat;
+- accesso a esperienze/esplorazioni;
+- attrazione/scoperta di specie;
+- sviluppo o manifestazione di comportamenti/varianti.
+
+Evitare una progressione in cui il giocatore accumula risorse principalmente per comprare moltiplicatori di produzione.
+
+La formula Bacche di M2 resta un parametro di prototipo e potrà essere rivista quando esisterà il primo vero sistema di creature raising.
