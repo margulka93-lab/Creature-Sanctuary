@@ -37,7 +37,7 @@ Il sistema cambia stato e posizione con semplici transizioni/animazioni 2D.
 
 Ogni creatura possiede una macchina a stati semplice, ad esempio:
 
-- idle;
+- idle/riposo;
 - dorme;
 - mangia;
 - raccoglie;
@@ -47,6 +47,79 @@ Ogni creatura possiede una macchina a stati semplice, ad esempio:
 - esegue un comportamento speciale.
 
 La scelta dell'attività dipende da condizioni e pesi probabilistici.
+
+### M1 — comportamento autonomo di Momo
+
+Per M1 la domanda non è quante attività possiamo implementare, ma se Momo può sembrare un individuo vivo senza che il giocatore lo comandi.
+
+La UI player-facing non deve quindi avere pulsanti del tipo "Vai all'Albero" o "Vai al Ruscello". Momo sceglie autonomamente che cosa fare; il giocatore osserva.
+
+Il profilo M1 usa tre attività authored:
+
+1. **Sonnecchia sotto l'Albero**
+   - anchor: Albero;
+   - attività più frequente e più lunga;
+   - comunica il lato timido e la preferenza per un punto sicuro.
+
+2. **Osserva il Ruscello**
+   - anchor: Ruscello;
+   - attività meno frequente;
+   - comunica curiosità senza trasformare il ruscello in una risorsa.
+
+3. **Esplora l'Erba Alta**
+   - anchor: Erba Alta;
+   - attività breve e meno frequente;
+   - comunica curiosità e disponibilità ad allontanarsi dal punto sicuro.
+
+Il tratto **goloso** resta visibile come identità di Momo, ma non deve produrre una meccanica finta prima che esistano cibo/bacche. Verrà espresso quando un sistema reale potrà reagire a quel tratto.
+
+#### Selezione
+
+- ogni attività possiede peso e intervallo di durata;
+- evitare la stessa attività due volte di seguito quando esiste almeno un'alternativa valida;
+- il tempo e la sorgente random devono essere iniettabili/testabili;
+- non serve un trait engine generico in M1: il comportamento authored di Momo può riflettere direttamente i suoi tratti;
+- i numeri di durata di M1 servono solo a rendere il prototipo osservabile e non sono bilanciamento definitivo.
+
+#### Stato e transizioni
+
+Lo stato minimo deve distinguere:
+
+- attività corrente;
+- anchor corrente;
+- fase stabile oppure movimento verso un altro anchor;
+- deadline della fase corrente.
+
+Quando termina un'attività:
+
+1. il core sceglie la prossima attività valida;
+2. se richiede un anchor diverso, Momo entra in movimento;
+3. all'arrivo inizia la nuova attività;
+4. quando l'attività termina il ciclo riparte.
+
+Non serve pathfinding: il rendering interpola soltanto fra anchor prestabiliti.
+
+#### Reload durante M1
+
+M1 non deve anticipare il vero sistema offline di M2.
+
+Al reload:
+
+- ripristinare lo stato persistito;
+- se una singola fase è già scaduta, risolverla in modo coerente e ripartire dal presente;
+- non simulare tutte le attività che Momo avrebbe potuto svolgere durante una lunga assenza;
+- non produrre risorse, eventi offline o Diario.
+
+### Segnale di successo M1
+
+La milestone è promettente se, osservando la Radura per pochi minuti senza interagire, il giocatore percepisce che Momo:
+
+- prende iniziative proprie;
+- preferisce alcuni luoghi/comportamenti ad altri;
+- non si muove con una cadenza meccanica identica;
+- comunica almeno in parte "timido ma curioso".
+
+La validazione finale resta umana: i test dimostrano coerenza tecnica, non che Momo sembri vivo.
 
 ## Personalità
 
