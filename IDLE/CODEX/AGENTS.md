@@ -59,11 +59,14 @@ Preferire dipendenze iniettate per tempo, RNG e storage.
 
 ## Priorità
 
-1. mantenere scope realistico;
-2. costruire il minimo sistema verificabile;
-3. preferire architettura semplice e data-driven;
-4. mantenere salvataggi e stato deterministici/testabili;
-5. aggiungere complessità solo quando una milestone la richiede.
+1. preservare la fantasy di creature-raising: le creature sono il centro, il santuario è uno strumento;
+2. mantenere scope realistico;
+3. costruire il minimo sistema verificabile;
+4. preferire architettura semplice e data-driven;
+5. mantenere salvataggi e stato deterministici/testabili;
+6. aggiungere complessità solo quando una milestone la richiede.
+
+Una risorsa, struttura o sistema gestionale non deve diventare automaticamente un fine della progressione. Quando la milestone lo richiede, deve servire cura, scoperta, attrazione, esperienza o sviluppo delle creature.
 
 ## Cose da NON introdurre autonomamente
 
@@ -75,7 +78,8 @@ Preferire dipendenze iniettate per tempo, RNG e storage.
 - physics engine non necessario;
 - open world;
 - placement libero;
-- breeding/genetica complessa;
+- breeding/genetica complessa prima di una decisione esplicita;
+- alberi evolutivi/forme inventati autonomamente;
 - gacha;
 - ads;
 - monetizzazione;
