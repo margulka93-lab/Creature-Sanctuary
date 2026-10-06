@@ -44,6 +44,30 @@ Comportamenti:
 - ama le bacche;
 - esplora gradualmente la radura.
 
+#### Profilo osservabile M1
+
+Per la prima validazione Momo usa soltanto tre comportamenti:
+
+| id | comportamento | anchor | peso prototipo | durata prototipo |
+| --- | --- | --- | ---: | --- |
+| `doze_tree` | sonnecchia sotto l'Albero | tree | 5 | 8–14 s |
+| `watch_stream` | osserva il Ruscello | stream | 3 | 5–9 s |
+| `explore_grass` | esplora l'Erba Alta | tall_grass | 2 | 4–7 s |
+
+Questi valori servono a leggere il comportamento durante il prototipo e non sono numeri di bilanciamento definitivo.
+
+L'Albero deve risultare chiaramente il luogo preferito. Ruscello ed Erba Alta mostrano invece che la curiosità può vincere temporaneamente sulla prudenza.
+
+Feedback placeholder accettabile:
+
+- testo/stato discreto che descrive ciò che Momo sta facendo;
+- pose, simboli o variazioni semplici della forma placeholder;
+- movimento visivo fra anchor.
+
+Non servono asset finali né dialoghi/popup. La scena deve restare osservabile senza interrompere il giocatore.
+
+Il tratto `goloso` non modifica ancora il comportamento: sarà collegato a cibo/bacche quando quel sistema esisterà.
+
 Funzione di design: creare affezione e insegnare che la creatura è un individuo, non un'unità produttiva.
 
 ### Nibi — Spriglet
