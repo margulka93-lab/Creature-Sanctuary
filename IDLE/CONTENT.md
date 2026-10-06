@@ -86,13 +86,45 @@ Tratti:
 - vivace;
 - disordinato.
 
-Possibile arrivo:
+#### Arrivo M3
 
-- Momo presente;
-- bacche disponibili;
-- rifugio almeno parzialmente riparato.
+Il requisito "rifugio riparato" resta un'idea futura e non viene usato in M3.
 
-Funzione: introdurre relazioni e interazioni.
+Progressione M3:
+
+1. primo ritorno valido dopo l'attivazione M3 → `nibi_tracks`;
+2. ritorno successivo con tracce già scoperte + Bacca nella ciotola → `nibi_arrival`;
+3. Nibi diventa residente.
+
+Testi discovery:
+
+- `nibi_tracks`  
+  "Vicino al sentiero sono comparse impronte leggere che non appartengono a Momo. Si fermano appena prima della Radura."
+
+- `nibi_arrival`  
+  "Le impronte stavolta arrivano fino alla ciotola. Poco oltre, un piccolo Spriglet color nocciola osserva Momo senza alcuna intenzione di andarsene."
+
+#### Profilo osservabile M3
+
+| id | comportamento | anchor | peso prototipo | durata prototipo |
+| --- | --- | --- | ---: | --- |
+| `rustle_grass` | si infila nell'Erba Alta | tall_grass | 4 | 3–6 s |
+| `splash_stream` | gioca vicino al Ruscello | stream | 3 | 4–7 s |
+| `visit_tree` | torna a curiosare vicino all'Albero | tree | 3 | 3–5 s |
+
+Movimento fra anchor: **2 secondi**, più rapido di Momo.
+
+Stato iniziale quando diventa residente: `visit_tree` presso l'Albero.
+
+Nibi deve risultare più mobile e impulsivo di Momo anche con placeholder semplici.
+
+Tratti espressi in M3:
+
+- `vivace` → soste più corte e movimento più rapido;
+- `socievole` → eventi condivisi frequenti una volta residente;
+- `disordinato` → tono di alcuni shared event.
+
+Funzione: introdurre relazioni e interazioni senza trasformare le creature in unità controllabili.
 
 ### Piko — Pebblin
 
@@ -172,12 +204,36 @@ Possibile funzione: prima prova che esistono creature che non seguono le regole 
 
 ## Relazioni già immaginate
 
-Non vincolanti, ma utili come esempi:
+- Momo + Nibi: prima relazione implementata in M3;
+- Nibi + Piko: rivalità/comic friction futura;
+- Momo + Brum: rapporto protettivo futuro;
+- Lumi + Momo: curiosità reciproca futura.
 
-- Momo + Nibi: amicizia naturale;
-- Nibi + Piko: rivalità/comic friction;
-- Momo + Brum: rapporto protettivo;
-- Lumi + Momo: curiosità reciproca.
+### Eventi condivisi Momo–Nibi M3
+
+Gli eventi condivisi entrano nel normale pool offline solo dopo che Nibi è residente.
+
+1. `pair_cautious_circle` — peso 4, relazione 0–1, delta +1  
+   "Nibi ha girato due volte intorno a Momo prima di sedersi. Momo ha fatto finta di non guardarlo."
+
+2. `pair_root_squeeze` — peso 2, relazione 0–3, delta -1  
+   "Nibi ha provato a infilarsi sotto le radici accanto a Momo. Dopo un minuto Momo si è alzato e se n'è andato con grande dignità."
+
+3. `pair_stream_follow` — peso 3, relazione 1–5, delta +1  
+   "Momo ha seguito Nibi fino al Ruscello, mantenendo per tutto il tragitto una distanza che evidentemente considerava casuale."
+
+4. `pair_grass_chase` — peso 3, relazione 1–5, delta +1  
+   "Per un po' l'Erba Alta si è mossa in due direzioni contemporaneamente. Quando sono riemersi, Nibi sembrava felicissimo e Momo molto meno contrario di quanto volesse mostrare."
+
+5. `pair_leaf_mess` — peso 2, relazione 2–5, delta +1  
+   "Nibi ha trascinato una quantità assurda di foglie vicino all'Albero. Momo le ha spostate una per una. Nibi ha ricominciato."
+
+6. `pair_shared_nap` — peso 2, relazione 3–5, delta +1  
+   "Momo e Nibi si sono addormentati sotto lo stesso tratto d'ombra, abbastanza vicini da sfiorarsi senza accorgersene."
+
+Il valore di relazione viene clampato fra 0 e 5.
+
+Questi eventi non aggiungono risorse in M3: il loro lavoro è cambiare e raccontare il rapporto.
 
 ## Strutture iniziali
 

@@ -140,16 +140,12 @@ Success criteria di design da playtest umano:
 
 Non dichiarare M1 validata finché il risultato non viene osservato nel browser.
 
-## M2 — Primo idle loop
+## M2 — Primo idle loop ✅
 
-**Stato di implementazione:** implementata (issue #8), con 74 test Node passati
-e build production riuscita. Verificato in browser un ritorno reale dopo oltre
-5 minuti a scheda chiusa: consumo della ciotola, singolo evento nel Diario,
-acknowledgement persistito e riapertura senza duplicati.
-Schema 3 con migrazione mirata da schema 2 e reconciliation fuori React prima
-del montaggio, seguita dal salvataggio immediato della nuova baseline.
-La validazione di design resta aperta al playtest umano dopo il merge.
-M3 non è iniziata.
+**Stato:** implementata, verificata e accettata per procedere.
+
+Il return loop con Bacche, ciotola e Diario è sufficientemente solido per testare
+M3. Bilanciamento, frequenze e testi restano provvisori e possono essere rivisti.
 
 **Domanda da validare:** tornare dopo un'assenza produce curiosità e la sensazione che il santuario abbia vissuto senza il giocatore?
 
@@ -211,21 +207,92 @@ Non iniziare M3 finché il return loop non è stato osservato in browser.
 
 ## M3 — Nibi e relazioni
 
-**Domanda da validare:** due creature creano storie sufficientemente interessanti?
+**Stato:** design definito, pronta per implementazione.
+
+**Domanda da validare:** una seconda creatura e una relazione semplicissima rendono il santuario sensibilmente più vivo e narrativamente interessante?
 
 Scope:
 
-- Nibi;
-- condizioni di arrivo;
-- relazione Momo↔Nibi;
-- eventi condivisi;
-- primo evento a più fasi/flag.
+- migrazione save schema 3 → 4;
+- `nibiPhase: unseen → traces → resident`;
+- discovery one-shot `nibi_tracks` al primo ritorno valido;
+- discovery one-shot `nibi_arrival` a un ritorno successivo con Bacca nella ciotola;
+- consumo della Bacca nell'arrivo;
+- Nibi residente e autonomo;
+- tre attività authored Nibi;
+- movimento Nibi 2 s;
+- relation Momo–Nibi 0–5;
+- categoria qualitativa visibile, numero nascosto;
+- 6 shared event authored con delta relazione;
+- shared event eligibility dipendente dalla relazione;
+- integrazione nel return loop M2 senza aumentare arbitrariamente il numero di eventi;
+- generalizzazione minima del behavior scheduler;
+- test Clock/RNG/save/reconciliation deterministici.
 
-Success criteria:
+Progressione Nibi:
 
-- Nibi non appare tramite acquisto;
-- la presenza di due creature produce eventi differenti da quelli individuali;
-- la relazione modifica almeno alcuni pesi/eventi.
+1. schema M3 iniziale: unseen;
+2. primo return ≥5m: traces;
+3. return successivo ≥5m con bowl berry: resident.
+
+Profilo Nibi:
+
+- rustle_grass: peso 4, 3–6 s;
+- splash_stream: peso 3, 4–7 s;
+- visit_tree: peso 3, 3–5 s;
+- initial: visit_tree;
+- movimento: 2 s.
+
+Relazione:
+
+- 0 = si stanno studiando;
+- 1–2 = si stanno abituando;
+- 3–4 = si cercano;
+- 5 = amici;
+- clamp 0–5;
+- no decay.
+
+Niente:
+
+- terza creatura;
+- relazione direzionale;
+- relationship decay;
+- bisogno sociale;
+- breeding;
+- Bestiario;
+- trait engine generico;
+- EventEngine universale;
+- DSL condizioni/effetti;
+- refactor completo content architecture;
+- nuove risorse;
+- nuove strutture;
+- meteo/mistero;
+- asset finali.
+
+Success criteria tecnici:
+
+- Nibi non appare prima della progressione prevista;
+- tracks e arrival sono one-shot e non si duplicano su reload;
+- arrival consuma la bowl berry e sopprime il normale bowl event;
+- Nibi diventa autonomo solo quando resident;
+- Momo e Nibi possono avanzare in modo indipendente;
+- la relation resta 0–5 e sopravvive al save;
+- shared event eleggibili cambiano in base alla relation;
+- relationship delta viene applicato esattamente una volta;
+- M2 exactly-once reconciliation resta valida;
+- M1/M2 regression test restano verdi.
+
+Success criteria di design da playtest umano:
+
+- le tracce creano almeno un minimo di anticipazione prima dell'arrivo;
+- usare la ciotola per attirare Nibi sembra causa/conseguenza, non acquisto mascherato;
+- Nibi appare caratterialmente diverso da Momo anche con placeholder;
+- quando entrambi sono presenti la Radura sembra più viva senza diventare caotica;
+- almeno uno shared event fa percepire un rapporto, non due NPC indipendenti;
+- il cambiamento della categoria di legame sembra conseguenza di ciò che è successo;
+- il giocatore è curioso di vedere un'altra interazione.
+
+Non iniziare M4 finché Nibi e il legame non sono stati osservati nel browser e in almeno un return report condiviso.
 
 ## M4 — Content architecture
 

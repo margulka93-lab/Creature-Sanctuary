@@ -148,11 +148,40 @@ I tratti modificano probabilità e disponibilità degli eventi, non richiedono u
 
 Versione realistica proposta:
 
-- un valore semplice per ogni coppia rilevante, ad esempio da -100 a +100;
+- un valore semplice per ogni coppia rilevante;
 - gli eventi possono aumentarlo o diminuirlo;
-- soglie qualitative: antipatia, neutrale, amici, legame forte.
+- soglie qualitative leggibili dal giocatore;
+- il valore numerico interno può restare nascosto.
 
-Il valore numerico può restare nascosto al giocatore.
+### M3 — relazione Momo ↔ Nibi
+
+M3 usa una sola relazione condivisa, non direzionale, con valore interno da **0 a 5**.
+
+Il giocatore non vede il numero. Vede soltanto una categoria qualitativa:
+
+- 0 → **si stanno studiando**;
+- 1–2 → **si stanno abituando**;
+- 3–4 → **si cercano**;
+- 5 → **amici**.
+
+Gli eventi condivisi possono applicare `+1` o `-1`, con clamp 0–5.
+
+Non esiste decadimento in M3.
+
+La relazione non deve essere una barra da riempire: serve a cambiare quali eventi possono accadere e quindi come il rapporto viene raccontato.
+
+#### Priorità eventi dopo l'arrivo di Nibi
+
+Nel return loop M3:
+
+1. eventuale avanzamento della scoperta di Nibi;
+2. evento ciotola se richiesto;
+3. massimo un evento condiviso Momo–Nibi se Nibi è residente e c'è uno slot disponibile;
+4. eventi generali M2 per gli slot rimanenti.
+
+Gli eventi condivisi rispettano il repetition control dell'ultimo report.
+
+La presenza della relazione non aumenta il limite M2 di 1–2 eventi normali. Le scoperte permanenti di Nibi possono essere rappresentate separatamente dal normale event slot perché comunicano un cambiamento di stato, non un evento ricorrente.
 
 ## Sistema offline
 
@@ -248,15 +277,43 @@ La cronologia di più ritorni resta fuori scope.
 
 Le creature non vengono acquistate.
 
-Ogni specie ha condizioni di attrazione nascoste o parzialmente scopribili. L'arrivo può avvenire per fasi:
+Ogni specie ha condizioni di attrazione nascoste o parzialmente scopribili. L'arrivo può avvenire per fasi tramite flag, condizioni e return events.
 
-1. traccia;
-2. reazione delle creature;
-3. avvistamento;
-4. incontro;
-5. permanenza.
+### M3 — arrivo di Nibi in due fasi
 
-Tecnicamente può essere implementato tramite flag, condizioni e probabilità.
+M3 implementa soltanto:
+
+1. `unseen` → **traces**
+2. `traces` → **resident**
+
+#### Prima fase: tracce
+
+Dopo la migrazione M2→M3, il **primo ritorno valido di almeno 5 minuti** mentre Nibi è `unseen` produce una scoperta one-shot: impronte vicino al sentiero.
+
+Questa scoperta:
+
+- non richiede la ciotola;
+- non consuma Bacche;
+- non rende ancora Nibi visibile;
+- imposta Nibi a `traces`.
+
+Può apparire insieme al normale report M2 perché è una scoperta permanente separata dagli event slot ricorrenti.
+
+#### Seconda fase: arrivo
+
+Quando Nibi è `traces`, un ritorno valido di almeno 5 minuti con **una Bacca nella ciotola** produce la scoperta one-shot di arrivo.
+
+Questa scoperta:
+
+- consuma la Bacca nella ciotola;
+- sostituisce il normale bowl event per quel ritorno;
+- imposta Nibi a `resident`;
+- inizializza il legame Momo–Nibi a 0;
+- fa comparire Nibi stabilmente nella Radura.
+
+Il return report dell'arrivo deve lasciare spazio narrativo all'arrivo: non aggiungere altri eventi ricorrenti in quel ritorno oltre a raccolta Bacche e discovery.
+
+Dopo l'arrivo, Nibi resta residente. Non implementare perdita/fuga della creatura in M3.
 
 ## Costruzione
 
