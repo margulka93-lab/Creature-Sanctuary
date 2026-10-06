@@ -159,3 +159,23 @@ Questa decisione non deve influenzare prematuramente il prototipo.
 - localizzazione.
 
 Da includere quando viene definita la UI reale.
+
+
+## Creature raising — priorità dopo M3
+
+Il principio è deciso: il giocatore deve allevare/influenzare lo sviluppo delle creature.
+
+Restano da progettare prima dell'implementazione:
+
+- qual è il primo cambiamento persistente verificabile su Momo?
+- quali input contano nel primo vertical slice: cibo, habitat, relazione, esplorazione, interazione diretta?
+- il risultato deve essere un comportamento appreso, una preferenza, un tratto, una variante visiva o una combinazione minima?
+- quali conseguenze sono reversibili e quali permanenti?
+- quanto deve essere leggibile la causa senza rivelare formule?
+- come impedire che il giocatore debba farmare sempre la stessa azione per ottenere lo sviluppo desiderato?
+- come rappresentare il rapporto giocatore↔creatura senza trasformarlo in una barra affetto da riempire?
+- le varianti/forme sono ramificazioni della stessa creatura, cambiamenti cosmetico-comportamentali o vere evoluzioni?
+- in quale momento, se mai, introdurre breeding e tratti ereditabili?
+- come collegare le esplorazioni allo sviluppo individuale?
+
+Queste domande devono essere risolte con una milestone di design/playtest prima di aggiungere Piko o una grande content architecture.
